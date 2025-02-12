@@ -1,0 +1,11 @@
+# Ignore compiled files
+target/
+*.class
+
+# Ignore IDE settings
+.idea/
+.vscode/
+*.iml
+
+# Ignore logs and OS-specific files
+*.log
