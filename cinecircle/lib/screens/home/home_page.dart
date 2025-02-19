@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cinecircle/screens/home/friend_activity_section.dart';
 import 'package:cinecircle/screens/home/movie_list_section.dart';
+import 'package:cinecircle/screens/notifications/notification_page.dart';
+import 'package:cinecircle/screens/profile/profile_page.dart';
 import 'package:cinecircle/models/movie.dart';
 import 'package:cinecircle/models/rating.dart';
 
@@ -12,8 +14,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 0;  // Current selected index for BottomNavigationBar
   Movie? selectedMovie;
+  // TODO: delete when Firebase is integrated
   List<Movie> movies = [
     Movie(
       title: "Inception",
@@ -28,7 +31,7 @@ class _HomePageState extends State<HomePage> {
 
   void _selectMovie(Movie movie) {
     setState(() {
-      selectedMovie = (selectedMovie == movie) ? null : movie; // Toggle selection
+      selectedMovie = (selectedMovie == movie) ? null : movie;
     });
   }
 
@@ -45,20 +48,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-@override
-Widget build(BuildContext context) {
-  List<Widget> _pages = [
-    Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
+  Widget build(BuildContext context) {
+    List<Widget> _pages = [
+      Column(
         children: [
           Expanded(
             child: ListView(
-              shrinkWrap: true,
               children: [
                 MovieListSection(
                   movies: movies,
-                  selectedMovie: selectedMovie, 
+                  selectedMovie: selectedMovie,
                   onMovieSelected: _selectMovie,
                   onReviewAdded: _addReview,
                 ),
@@ -68,43 +67,37 @@ Widget build(BuildContext context) {
           ),
         ],
       ),
-    ),
-    Center(child: Text("Notifications Page")), 
-    Center(child: Text("Profile Page")), 
-  ];
+      NotificationPage(),
+      ProfilePage(),
+    ];
 
-  return Scaffold(
-    appBar: AppBar(
-      title: Text(
-        "CineCircle",
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 32,
-          fontFamily: 'Inter Tight',
-          color: Colors.white,
-        ),
-      ),
-      centerTitle: true,
-      flexibleSpace: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color.fromARGB(255, 255, 52, 52), Color.fromARGB(255, 194, 0, 161)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("CineCircle"),
+        centerTitle: true,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color.fromARGB(255, 255, 52, 52), Color.fromARGB(255, 194, 0, 161)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
           ),
         ),
       ),
-    ),
-    body: _pages[_selectedIndex],
-    bottomNavigationBar: BottomNavigationBar(
-      currentIndex: _selectedIndex,
-      onTap: _onItemTapped,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.movie), label: "Home"),
-        BottomNavigationBarItem(icon: Icon(Icons.notifications_active), label: "Notifications"),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
-      ],
-    ),
-  );
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _pages,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.movie), label: "Movies"),
+          BottomNavigationBarItem(icon: Icon(Icons.notifications), label: "Notifications"),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+        ],
+      ),
+    );
   }
 }
