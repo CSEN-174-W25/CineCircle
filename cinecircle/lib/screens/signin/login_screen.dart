@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../home/movie_list.dart';
+import '../home/home_page.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -34,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {    // TODO: Add firebase fr
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => MovieListScreen()),
+        MaterialPageRoute(builder: (context) => HomePage()),
       );
     } catch (e) {
       setState(() => _errorMessage = _getAuthErrorMessage(e.toString()));

@@ -76,6 +76,7 @@ dependencies:
   json_path: ^0.7.0
   timeago: ^3.4.0
   stream_transform: ^2.1.0
+  five_pointed_star: ^1.0.3
 
   # URL Launcher (Android Only)
   url_launcher: ^6.2.0

@@ -1,4 +1,5 @@
-import 'package:cinecircle/screens/home/movie_detail.dart';
+import 'package:cinecircle/screens/home/home_page.dart';
+import 'package:cinecircle/widgets/movie_detail.dart';
 import 'package:cinecircle/models/movie.dart';
 import 'package:flutter/material.dart';
 //import 'package:firebase_core/firebase_core.dart';
@@ -21,17 +22,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final movie = Movie(
-      id: "1",
-      title: "Inception",
-      imageUrl: "https://image.tmdb.org/t/p/w500/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg",
-      averageRating: 4.5,
-    );
-
     return MaterialApp(
-      title: 'Movie Rating App',
+      title: 'CineCircle',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: MovieDetail(movie: movie),
+      home: HomePage(),
       // home: AuthCheck(), TODO: Add auth check
     );
   }

@@ -1,15 +1,13 @@
 import 'rating.dart';
 
 class Movie {
-  final String id;
   final String title;
   String? year;
   final String imageUrl;
-  final double averageRating;
+  double averageRating;
   final List<Rating> ratings;
 
   Movie({
-    required this.id,
     required this.title,
     this.year,
     required this.imageUrl,
@@ -19,7 +17,6 @@ class Movie {
 
   factory Movie.fromJson(Map<String, dynamic> json) {
     return Movie(
-      id: json['id'],
       title: json['title'],
       year: json['year'],
       imageUrl: json['imageUrl'] ?? '',
@@ -28,5 +25,13 @@ class Movie {
           .map((rating) => Rating.fromJson(rating))
           .toList(),
     );
+  }
+
+    void addRating(Rating newRating) {
+    ratings.add(newRating); // Add the new rating
+    if (ratings.isNotEmpty) {
+      averageRating =
+          ratings.map((r) => r.score).reduce((a, b) => a + b) / ratings.length;
+    }
   }
 }
