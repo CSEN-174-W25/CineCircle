@@ -22,7 +22,7 @@ class _ShareYourThoughtsState extends State<ShareYourThoughts> {
 
     Rating newRating = Rating(
       userId: "user123", // Replace with actual user ID later
-      username: "JohnDoe", // Replace with actual username later
+      title: widget.movie.title,
       score: _rating,
       comment: _controller.text,
     );
@@ -37,31 +37,34 @@ class _ShareYourThoughtsState extends State<ShareYourThoughts> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Padding(
+      padding: const EdgeInsets.only(left: 20.0, top: 8.0, right: 20.0, bottom: 8.0),
+      child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text("Share Your Thoughts", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
         Row(
-          children: [
-            Text("Your Rating:"),
-            FivePointedStar( 
-            onChange: (value) { 
-              setState(() { 
-                _rating = value.toDouble(); 
-              }); 
-            }, 
-          ), 
-          ],
+        children: [
+          Text("Your Rating:"),
+          FivePointedStar(
+          onChange: (value) {
+            setState(() {
+            _rating = value.toDouble();
+            });
+          },
+          ),
+        ],
         ),
         TextField(
-          controller: _controller,
-          decoration: InputDecoration(hintText: "Write a review..."),
+        controller: _controller,
+        decoration: InputDecoration(hintText: "Write a review..."),
         ),
         ElevatedButton(
-          onPressed: _submitReview,
-          child: Text("Submit"),
+        onPressed: _submitReview,
+        child: Text("Submit"),
         ),
       ],
+      ),
     );
   }
 }

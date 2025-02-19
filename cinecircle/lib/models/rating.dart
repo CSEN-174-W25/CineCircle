@@ -1,12 +1,13 @@
 class Rating {
   final String userId;
-  final String username;
+  final String title;
   final double score;
   String? comment;
 
   Rating({
+
     required this.userId, 
-    required this.username, 
+    required this.title, 
     required this.score, 
     this.comment
   });
@@ -14,7 +15,7 @@ class Rating {
   factory Rating.fromJson(Map<String, dynamic> json) {
     return Rating(
       userId: json['userId'],
-      username: json['username'],
+      title: json['title'],
       score: (json['score'] as num).toDouble(),
       comment: json['comment'],
     );
