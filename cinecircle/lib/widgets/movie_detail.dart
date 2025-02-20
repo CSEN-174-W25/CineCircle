@@ -32,9 +32,9 @@ class MovieDetail extends StatelessWidget {
             Column(
               children: movie.ratings.map((rating) => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-                child: Text(
-                  "- $rating", // Display each rating
-                  style: TextStyle(fontSize: 16),
+                child: ListTile(
+                  title: Text("${rating.userId} rated ${rating.score}/5."),
+                  subtitle: Text(rating.comment ?? ""),
                 ),
               )).toList(),
             ),

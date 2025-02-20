@@ -3,6 +3,7 @@ import 'package:cinecircle/screens/home/friend_activity_section.dart';
 import 'package:cinecircle/screens/home/movie_list_section.dart';
 import 'package:cinecircle/screens/notifications/notification_page.dart';
 import 'package:cinecircle/screens/profile/profile_page.dart';
+import 'package:cinecircle/widgets/movie_detail.dart';
 import 'package:cinecircle/models/movie.dart';
 import 'package:cinecircle/models/rating.dart';
 
@@ -16,7 +17,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;  // Current selected index for BottomNavigationBar
   Movie? selectedMovie;
-  // TODO: delete when Firebase is integrated
   List<Movie> movies = [
     Movie(
       title: "Inception",
@@ -61,7 +61,18 @@ class _HomePageState extends State<HomePage> {
                   onMovieSelected: _selectMovie,
                   onReviewAdded: _addReview,
                 ),
-                FriendActivitySection(reviews: friendReviews),
+                FriendActivitySection(
+                  reviews: friendReviews,
+                  movies: movies,
+                  onMovieTap: (Movie movie) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MovieDetail(movie: movie),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -71,20 +82,34 @@ class _HomePageState extends State<HomePage> {
       ProfilePage(),
     ];
 
+    // Conditionally set the app bar based on the selected index
     return Scaffold(
-      appBar: AppBar(
-        title: Text("CineCircle"),
-        centerTitle: true,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color.fromARGB(255, 255, 52, 52), Color.fromARGB(255, 194, 0, 161)],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-        ),
-      ),
+      appBar: _selectedIndex == 0
+          ? AppBar(
+              title: Text(
+                "CineCircle",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: "Inter Tight",
+                  fontSize: 32,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              centerTitle: true,
+              flexibleSpace: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color.fromARGB(255, 255, 52, 52),
+                      Color.fromARGB(255, 194, 0, 161)
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                ),
+              ),
+            )
+          : null, // Set to null for other pages to not show the app bar
       body: IndexedStack(
         index: _selectedIndex,
         children: _pages,

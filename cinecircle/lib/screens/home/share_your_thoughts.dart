@@ -22,7 +22,6 @@ class _ShareYourThoughtsState extends State<ShareYourThoughts> {
 
     Rating newRating = Rating(
       userId: "user123", // Replace with actual user ID later
-      title: widget.movie.title,
       score: _rating,
       comment: _controller.text,
     );
