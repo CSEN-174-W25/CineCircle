@@ -2,15 +2,16 @@ class User{
     final String userId;
     String username;
     double averageRating;
-    List<User> friendList;
+    //List<User> friendList;
+    int friendsAmount;
 
     User({
-        required.this.userId,
-        required.this.username,
-        this.averageRating,
-        this.friendsAmount,
-        required.this.friendList
-    })
+        required this.userId,
+        required this.username,
+        required this.averageRating,
+        required this.friendsAmount,
+        //required this.friendList
+    });
 
     factory User.fromJson(Map<String, dynamic> json){
         return User(
@@ -18,7 +19,6 @@ class User{
             username: json['username'],
             averageRating:  (json['score'] as num).toDouble(),
             friendsAmount: (json['friendsAmount'] as num).toInt(),
-            List<User>? friendList
-        ): friendList = friendList ?? [];
+        ); 
     }
 }
