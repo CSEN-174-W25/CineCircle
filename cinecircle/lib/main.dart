@@ -1,4 +1,5 @@
 import 'package:cinecircle/screens/home/home_page.dart';
+import 'package:cinecircle/screens/profile/profile_page.dart';
 import 'package:cinecircle/widgets/movie_detail.dart';
 import 'package:cinecircle/models/movie.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'CineCircle',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: HomePage(),
+      home: ProfilePage(),
+      //home: HomePage(),
       // home: AuthCheck(), TODO: Add auth check
     );
   }
