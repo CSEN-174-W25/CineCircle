@@ -25,9 +25,10 @@ class _ProfilePageState extends State<ProfilePage> {
   User johnDoe = User(
     userId: "doe3954",
     username: "John Doe",
-    averageRating: 4.5,
+    averageRating: 4,
     friendsAmount: 15,
     picUrl: "https://static.vecteezy.com/system/resources/thumbnails/019/879/186/small_2x/user-icon-on-transparent-background-free-png.png",
+    bio: "Yippee ദ്ദി •⩊• )",
     top4: [
       Movie(
         title: "La Haine",
@@ -45,32 +46,8 @@ class _ProfilePageState extends State<ProfilePage> {
         title: "Clerks",
         imageUrl: "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/9IiSgiq4h4siTIS9H3o4nZ3h5L9.jpg"
       )
-  ]
+    ]
   );
-
-/*
-    @override
-    Widget build(BuildContext context) {
-        return Scaffold(
-            appBar: AppBar(title: Text("Cinecircle")),
-            body: SingleChildScrollView(
-                child: Column(
-                    children:[
-                        UserDescription(
-                          user: johnDoe
-                        ),
-                        Text("Favorite Movies"),
-
-                        FavoriteMovies(
-                          user: johnDoe),
-                        AverageRating()
-
-                    ]
-                )
-            )
-        );
-    }
-*/
 
     @override
     Widget build(BuildContext context) {
@@ -79,21 +56,24 @@ class _ProfilePageState extends State<ProfilePage> {
         body: SingleChildScrollView(
           child: Center( // Center the Column
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center, // Center vertically
               crossAxisAlignment: CrossAxisAlignment.center, // Center horizontally
               children: [
                 SizedBox(height: MediaQuery.of(context).size.height * 0.2), // Adjust height for centering
                 UserDescription(user: johnDoe),
                 SizedBox(height: 20), // Add spacing between widgets
                 Text(
-                  "Favorite Movies",
+                  "Favorite Medias",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
+                FavoriteMovies(user: johnDoe),
+                Text("Average User Rating",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                AverageRating(user: johnDoe)
               ],
             ),
           ),
         ),
       );
     }
-
 }

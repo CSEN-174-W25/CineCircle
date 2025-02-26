@@ -19,6 +19,7 @@ class _FavoriteMoviesState extends State<FavoriteMovies> {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: widget.user.top4.map((movie) { // Iterate over top4 movies
         return Padding(
           padding: const EdgeInsets.all(8.0),

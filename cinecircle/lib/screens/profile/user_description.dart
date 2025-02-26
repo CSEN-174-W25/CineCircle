@@ -34,6 +34,10 @@ class _UserDescriptionState extends State<UserDescription> {
           '${widget.user.friendsAmount} Friends',
           style: const TextStyle(fontSize: 16, color: Colors.grey),
         ),
+        Text(
+          widget.user.bio,
+          style: const TextStyle(fontSize: 13)
+        )
       ],
     );
   }
