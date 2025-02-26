@@ -1,45 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:cinecircle/screens/home/your_thoughts_section.dart';
 import 'package:cinecircle/screens/home/friend_activity_section.dart';
-import 'package:cinecircle/screens/home/movie_list_section.dart';
 import 'package:cinecircle/screens/notifications/notification_page.dart';
 import 'package:cinecircle/screens/profile/profile_page.dart';
-import 'package:cinecircle/widgets/movie_detail.dart';
-import 'package:cinecircle/models/movie.dart';
+import 'package:cinecircle/widgets/media_detail.dart';
+import 'package:cinecircle/models/media.dart';
 import 'package:cinecircle/models/rating.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  _HomePageState createState() => _HomePageState();
+  HomePageState createState() => HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;  // Current selected index for BottomNavigationBar
-  Movie? selectedMovie;
-  List<Movie> movies = [
-    Movie(
-      title: "Inception",
-      imageUrl: "https://image.tmdb.org/t/p/w500/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg",
-    ),
-    Movie(
-      title: "Interstellar",
-      imageUrl: "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
-    ),
-  ];
+class HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+  Media? selectedMedia;
+  List<Media> medias = [];
   List<Rating> friendReviews = [];
-
-  void _selectMovie(Movie movie) {
-    setState(() {
-      selectedMovie = (selectedMovie == movie) ? null : movie;
-    });
-  }
-
-  void _addReview(Rating rating) {
-    setState(() {
-      friendReviews.add(rating);
-    });
-  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -47,42 +26,71 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void _handleReviewAdded(Media media, Rating rating) {
+    setState(() {
+      media.addRating(rating); 
+
+      // Ensure media is added only once
+      if (!medias.contains(media)) {
+        medias.add(media);
+      }
+
+      // Prevent duplicate reviews
+      bool isDuplicate = friendReviews.any((r) =>
+          r.userId == rating.userId && r.review == rating.review && r.score == rating.score);
+      if (!isDuplicate) {
+        friendReviews.add(rating);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Widget> _pages = [
-      Column(
-        children: [
-          Expanded(
-            child: ListView(
-              children: [
-                MovieListSection(
-                  movies: movies,
-                  selectedMovie: selectedMovie,
-                  onMovieSelected: _selectMovie,
-                  onReviewAdded: _addReview,
-                ),
-                FriendActivitySection(
-                  reviews: friendReviews,
-                  movies: movies,
-                  onMovieTap: (Movie movie) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MovieDetail(movie: movie),
-                      ),
-                    );
-                  },
-                ),
-              ],
+      SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Column(
+          children: [
+            YourThoughtsSection(
+              selectedMedia: selectedMedia,
+              onMediaSelected: (Media media) {
+                setState(() {
+                  selectedMedia = media;
+                });
+              },
+              onReviewAdded: (Media media, Rating rating) {
+                _handleReviewAdded(media, rating);
+
+                // Unselect media after review submission
+                setState(() {
+                  selectedMedia = null;
+                });
+              },
             ),
-          ),
-        ],
+
+            SizedBox(height: 20),
+
+            FriendActivitySection(
+              reviews: friendReviews,
+              medias: medias, 
+              onMediaTap: (Media media) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MediaDetail(media: media),
+                  ),
+                );
+              },
+            ),
+
+            SizedBox(height: 20),
+          ],
+        ),
       ),
       NotificationPage(),
       ProfilePage(),
     ];
 
-    // Conditionally set the app bar based on the selected index
     return Scaffold(
       appBar: _selectedIndex == 0
           ? AppBar(
@@ -109,7 +117,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             )
-          : null, // Set to null for other pages to not show the app bar
+          : null,
       body: IndexedStack(
         index: _selectedIndex,
         children: _pages,
@@ -118,7 +126,7 @@ class _HomePageState extends State<HomePage> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.movie), label: "Movies"),
+          BottomNavigationBarItem(icon: Icon(Icons.movie), label: "Movies & Shows"),
           BottomNavigationBarItem(icon: Icon(Icons.notifications), label: "Notifications"),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ],

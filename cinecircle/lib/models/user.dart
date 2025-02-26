@@ -1,4 +1,4 @@
-class User{
+/* class User{
     final String userId;
     String username;
     double averageRating;
@@ -17,3 +17,4 @@ class User{
         );
     }
 }
+*/

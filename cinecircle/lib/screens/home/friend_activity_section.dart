@@ -1,64 +1,96 @@
 import 'package:flutter/material.dart';
-import 'package:cinecircle/models/movie.dart';
+import 'package:cinecircle/models/media.dart';
 import 'package:cinecircle/models/rating.dart';
 
 class FriendActivitySection extends StatelessWidget {
   final List<Rating> reviews;
-  final List<Movie> movies;
-  final void Function(Movie) onMovieTap;
+  final List<Media> medias;
+  final void Function(Media) onMediaTap;
 
   const FriendActivitySection({
     required this.reviews,
-    required this.movies,
-    required this.onMovieTap,
+    required this.medias,
+    required this.onMediaTap,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
+    final mediaWithReviews = medias.where((media) => media.ratings.isNotEmpty).toList();
+    
+    final reversedMediaList = List<Media>.from(mediaWithReviews.reversed);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
             "Friend Activity",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
-          if (reviews.isEmpty)
-            Text("No reviews yet.")
-          else
-            // Loop through movies that have reviews
-            Column(
-              children: movies.map((movie) {
-                // Check if movie has any reviews
-                if (movie.ratings.isNotEmpty) {
-                  return GestureDetector(
-                    onTap: () => onMovieTap(movie),
-                    child: Card(
-                      child: Column(
-                        children: [
-                          Image.network(
-                            movie.imageUrl,
-                            height: 200,
-                            fit: BoxFit.cover,
-                          ),
-                          Text(movie.title),
-                          ListTile(
-                            title: Text("Average Rating: ${movie.averageRating}/5."),
-                            subtitle: Text("Total Reviews: ${movie.ratings.length}"),
-                          ),
-                        ],
+        ),
+
+        if (reversedMediaList.isEmpty)
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text("No reviews yet."),
+          )
+        else
+          ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(), // Uses HomePage scrolling behavior
+            itemCount: reversedMediaList.length,
+            itemBuilder: (context, index) {
+              final media = reversedMediaList[index];
+              return GestureDetector(
+                onTap: () => onMediaTap(media),
+                child: Card(
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                        child: Image.network(
+                          media.imageUrl,
+                          height: 250,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
-                  );
-                } else {
-                  return SizedBox();
-                }
-              }).toList(),
-            ),
-        ],
-      ),
+                      Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              media.title,
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(height: 5),
+                            Text(
+                              "Average Rating: ${media.averageRating.toStringAsFixed(1)}/5",
+                              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                            ),
+                            Text(
+                              "Total Reviews: ${media.ratings.length}",
+                              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+      ],
     );
   }
 }

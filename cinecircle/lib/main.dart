@@ -1,5 +1,6 @@
 import 'package:cinecircle/screens/home/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 //import 'package:firebase_core/firebase_core.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 //import 'screens/signin/login_screen.dart';
@@ -12,6 +13,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform, 
   );
 TODO: fix firebase initialization */
+  await dotenv.load(fileName: ".env");
   runApp(MyApp());
 }
 
