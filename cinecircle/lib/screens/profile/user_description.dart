@@ -21,7 +21,7 @@ class _UserDescriptionState extends State<UserDescription> {
     return Column(
       children: [
         CircleAvatar(
-          radius: 40,
+          radius: 50,
           backgroundImage: NetworkImage(widget.user.picUrl),
         ),
         const SizedBox(height: 8),

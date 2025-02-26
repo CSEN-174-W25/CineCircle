@@ -22,11 +22,11 @@ class _FavoriteMoviesState extends State<FavoriteMovies> {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: widget.user.top4.map((movie) { // Iterate over top4 movies
         return Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(1.0),
           child: Image.network(
             movie.imageUrl,
-            width: 100, // Set a fixed width
-            height: 150, // Set a fixed height
+            width: 90, // Set a fixed width
+            height: 140, // Set a fixed height
             fit: BoxFit.cover, // Ensure the image fits well
           ),
         );

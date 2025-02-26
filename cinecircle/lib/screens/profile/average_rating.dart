@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:cinecircle/models/user.dart';
-import 'package:five_pointed_star/five_pointed_star.dart';
 
 class AverageRating extends StatefulWidget{
     final User user;
@@ -22,12 +21,9 @@ class _AverageRatingState extends State<AverageRating>{
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            FivePointedStar(
-              //User Rating from int to star
-              count: widget.user.averageRating,
-              onChange: (count){
-                print(count);
-              },
+            Text(
+              widget.user.averageRating.toString(),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
             )
           ]
         );

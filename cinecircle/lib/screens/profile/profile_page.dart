@@ -25,7 +25,7 @@ class _ProfilePageState extends State<ProfilePage> {
   User johnDoe = User(
     userId: "doe3954",
     username: "John Doe",
-    averageRating: 4,
+    averageRating: 4.3,
     friendsAmount: 15,
     picUrl: "https://static.vecteezy.com/system/resources/thumbnails/019/879/186/small_2x/user-icon-on-transparent-background-free-png.png",
     bio: "Yippee ദ്ദി •⩊• )",
@@ -54,7 +54,7 @@ class _ProfilePageState extends State<ProfilePage> {
       return Scaffold(
         appBar: AppBar(title: Text("Cinecircle")),
         body: SingleChildScrollView(
-          child: Center( // Center the Column
+         // child: Center( // Center the Column
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center, // Center horizontally
               children: [
@@ -66,13 +66,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 FavoriteMovies(user: johnDoe),
+                SizedBox(height: 20), // Add spacing between widgets
                 Text("Average User Rating",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 AverageRating(user: johnDoe)
               ],
             ),
-          ),
+          //),
         ),
       );
     }
