@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cinecircle/models/media.dart';
 import 'package:cinecircle/models/rating.dart';
 import 'package:five_pointed_star/five_pointed_star.dart';
+//import 'package:cinecircle/services/firestore_service.dart';
 
 class MediaReview extends StatefulWidget {
   final Media media;

@@ -1,15 +1,22 @@
 import 'rating.dart';
+import 'package:intl/intl.dart';
 
 class Media {
   final String title;
-  final String? year;
+  final String releaseDate;
   final String imageUrl;
+  final String mediaType;
+  final String overview;
+  final int id;
   double averageRating;
   List<Rating> ratings;
 
   Media({
     required this.title,
-    this.year,
+    required this.releaseDate,
+    required this.id,
+    required this.mediaType,
+    required this.overview,
     required this.imageUrl,
     this.averageRating = 0.0,
     List<Rating>? ratings,
@@ -17,41 +24,38 @@ class Media {
 
   // Parse JSON from TMDb API
   factory Media.fromJson(Map<String, dynamic> json) {
+    String usaDate = "Unknown";
+
+    // Use release_date for movies, first_air_date for TV shows
+    String? rawDate = json['release_date'] ?? json['first_air_date'];
+
+    if (rawDate != null && rawDate.isNotEmpty) {
+      try {
+        DateTime parsedDate = DateTime.parse(rawDate);
+        usaDate = DateFormat('MM-dd-yyyy').format(parsedDate);
+      } catch (e) {
+        usaDate = "Unknown"; // Fallback in case of parsing errors
+      }
+    }
+
     return Media(
       title: json['title'] ?? json['name'] ?? "Unknown",
-      year: (json['release_date'] != null && json['release_date'].length >= 4)
-          ? json['release_date'].substring(0, 4)
-          : (json['first_air_date'] != null && json['first_air_date'].length >= 4)
-              ? json['first_air_date'].substring(0, 4)
-              : null,
+      releaseDate: usaDate,
       imageUrl: (json['poster_path'] != null && json['poster_path'].isNotEmpty)
           ? "https://image.tmdb.org/t/p/w500${json['poster_path']}"
           : "assets/images/placeholder.png",  // Uses placeholder image if missing
       averageRating: (json['vote_average'] as num?)?.toDouble() ?? 0.0,
-      ratings: json['ratings'] != null
-          ? (json['ratings'] as List)
-              .map((rating) => Rating.fromJson(rating))
-              .toList()
-          : [],
+      id: json['id'] as int? ?? 0,
+      mediaType: json['media_type'] ?? "unknown",
+      overview: json['overview'] ?? "",
+      ratings: [],
     );
-  }
-
-  // Convert to JSON For Storing in Firebase
-  Map<String, dynamic> toJson() {
-    return {
-      "title": title,
-      "year": year,
-      "imageUrl": imageUrl,
-      "averageRating": averageRating,
-      "ratings": ratings.map((r) => r.toJson()).toList(),
-    };
   }
 
   void addRating(Rating newRating) {
     ratings.add(newRating);
-    if (ratings.isNotEmpty) {
-      averageRating =
-          ratings.map((r) => r.score).reduce((a, b) => a + b) / ratings.length;
-    }
+    averageRating = ratings.isNotEmpty
+        ? ratings.fold(0.0, (sum, r) => sum + r.score) / ratings.length
+        : 0.0;
   }
 }

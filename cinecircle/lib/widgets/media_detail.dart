@@ -20,23 +20,39 @@ class MediaDetail extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "${media.title} (${media.year})",
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      "${media.title} (${media.mediaType})",
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                  Text(
-                    "Average Rating: ${media.averageRating.toStringAsFixed(1)}/5",
-                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 0.0),
+                    child: Text(
+                      media.releaseDate,
+                      style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                    ),
                   ),
-                  Text(
-                    "Total Reviews: ${media.ratings.length}",
-                    style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 0.0),
+                    child: Text(
+                      "Average Rating: ${media.averageRating.toStringAsFixed(1)}/5 From ${media.ratings.length} Reviews",
+                      style: TextStyle(fontSize: 18, color: Colors.grey[700]),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      media.overview,
+                      style: TextStyle(fontSize: 16, color: const Color.fromARGB(255, 0, 0, 0)),
+                    ),
                   ),
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 10.0, top: 4.0),
+              padding: const EdgeInsets.only(left: 10.0, top: 12.0),
               child: Text(
                 "Reviews:",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

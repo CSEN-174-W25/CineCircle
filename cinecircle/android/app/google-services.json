@@ -15,7 +15,26 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCa7oPd_8DbgXjcJ3vNOME77GgU4z7ANLc"
+          "current_key": "AIzaSyCOLphxlMPWbL_94pNMl03WRx0ZRZn0K5A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:959723271102:android:7c8c0928dc24e5f877ffef",
+        "android_client_info": {
+          "package_name": "com.example.cinecircle"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOLphxlMPWbL_94pNMl03WRx0ZRZn0K5A"
         }
       ],
       "services": {
@@ -34,7 +53,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCa7oPd_8DbgXjcJ3vNOME77GgU4z7ANLc"
+          "current_key": "AIzaSyCOLphxlMPWbL_94pNMl03WRx0ZRZn0K5A"
         }
       ],
       "services": {
