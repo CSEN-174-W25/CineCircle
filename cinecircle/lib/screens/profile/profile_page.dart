@@ -6,6 +6,7 @@ import 'package:cinecircle/models/user.dart';
 import 'package:cinecircle/screens/profile/average_rating.dart';
 import 'package:cinecircle/screens/profile/user_description.dart';
 import 'package:cinecircle/screens/profile/favorite_movies.dart';
+import 'package:cinecircle/screens/profile/friend_button.dart';
 
 class ProfilePage extends StatefulWidget {
     const ProfilePage({super.key});
@@ -56,10 +57,12 @@ class _ProfilePageState extends State<ProfilePage> {
         body: SingleChildScrollView(
          // child: Center( // Center the Column
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center, // Center horizontally
+              //crossAxisAlignment: CrossAxisAlignment.center, // Center horizontally
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 SizedBox(height: MediaQuery.of(context).size.height * 0.2), // Adjust height for centering
                 UserDescription(user: johnDoe),
+                FriendRequestButton(),
                 SizedBox(height: 20), // Add spacing between widgets
                 Text(
                   "Favorite Medias",

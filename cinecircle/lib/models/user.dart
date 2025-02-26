@@ -4,7 +4,7 @@ class User{
     final String userId;
     String username;
     double averageRating;
-    //List<User> friendList;
+   // List<User> friendList;
     int friendsAmount;
     String picUrl;  //Profile picture URL
     List<Movie> top4;
@@ -18,7 +18,7 @@ class User{
         required this.picUrl,
         List<Movie>? top4,
         required this.bio
-        //required this.friendList
+        //List<User> friendList
     }): top4 = top4 ?? [];
 
     factory User.fromJson(Map<String, dynamic> json){
