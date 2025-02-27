@@ -15,7 +15,7 @@ class _FriendRequestButtonState extends State<FriendRequestButton> {
         buttonText = "Cancel Request";
         isRequested = true;
       } else {
-        buttonText = "Send Request";
+        buttonText = "Add Friend";
         isRequested = false;
       }
     });

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:cinecircle/models/user.dart';
+import 'package:cinecircle/screens/profile/friend_button.dart';
 
 class UserDescription extends StatefulWidget{
     final User user;
@@ -34,6 +35,8 @@ class _UserDescriptionState extends State<UserDescription> {
           '${widget.user.friendsAmount} Friends',
           style: const TextStyle(fontSize: 16, color: Colors.grey),
         ),
+        FriendRequestButton(),
+        const SizedBox(height: 10),
         Text(
           widget.user.bio,
           style: const TextStyle(fontSize: 13)

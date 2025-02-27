@@ -6,7 +6,6 @@ import 'package:cinecircle/models/user.dart';
 import 'package:cinecircle/screens/profile/average_rating.dart';
 import 'package:cinecircle/screens/profile/user_description.dart';
 import 'package:cinecircle/screens/profile/favorite_movies.dart';
-import 'package:cinecircle/screens/profile/friend_button.dart';
 
 class ProfilePage extends StatefulWidget {
     const ProfilePage({super.key});
@@ -29,7 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
     averageRating: 4.3,
     friendsAmount: 15,
     picUrl: "https://static.vecteezy.com/system/resources/thumbnails/019/879/186/small_2x/user-icon-on-transparent-background-free-png.png",
-    bio: "Yippee ദ്ദി •⩊• )",
+    bio: "Yippee0YippeeYippeeYippeeYippeeYippeeYippeeYippeeYippee ദ്ദി •⩊• )",
     top4: [
       Movie(
         title: "La Haine",
@@ -62,7 +61,6 @@ class _ProfilePageState extends State<ProfilePage> {
               children: [
                 SizedBox(height: MediaQuery.of(context).size.height * 0.2), // Adjust height for centering
                 UserDescription(user: johnDoe),
-                FriendRequestButton(),
                 SizedBox(height: 20), // Add spacing between widgets
                 Text(
                   "Favorite Medias",
