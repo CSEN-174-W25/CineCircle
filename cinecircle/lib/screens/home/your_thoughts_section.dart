@@ -85,6 +85,7 @@ class YourThoughtsSectionState extends State<YourThoughtsSection> {
         final data = json.decode(response.body);
         setState(() {
           searchResults = (data["results"] as List)
+              .where((item) => item["poster_path"] != null && item["poster_path"].isNotEmpty)
               .map((item) => Media.fromJson(item))
               // .take(10) // TODO: Use if we want to limit search results
               .toList();

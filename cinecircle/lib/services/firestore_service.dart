@@ -1,45 +1,90 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+/*import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cinecircle/models/media.dart';
+import 'package:cinecircle/models/rating.dart';
 
 class FirestoreService {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  /// 🔹 Firestore Collection Reference (Auto Converts `Media`)
+  final CollectionReference<Media> _mediaCollection =
+      FirebaseFirestore.instance.collection('medias').withConverter<Media>(
+            fromFirestore: (snap, _) => Media.fromJson(snap.data()!),
+            toFirestore: (media, _) => media.toJson(),
+          );
 
-  Future<void> rateMovie(Media uploadMedia, int rating, String review) async {
-    final movieRef = FirebaseFirestore.instance.collection('medias').doc(uploadMedia.id.toString());
-    final ratingRef = movieRef.collection('ratings').doc("user123");
+  /// Fetches movies as a stream (real-time updates)
+  Stream<List<Media>> streamMedias() {
+    return _mediaCollection.snapshots().asyncMap((snapshot) async {
+      List<Media> medias = [];
 
-    // Check if movie exists
-    DocumentSnapshot movieSnapshot = await movieRef.get();
+      for (var doc in snapshot.docs) {
+        Media media = doc.data() as Media;
 
-    if (!movieSnapshot.exists) {
-      // If movie doesn't exist, create it
-      await movieRef.set({
-        'title': uploadMedia.title,
-        'posterUrl': uploadMedia.imageUrl,
-        'releaseDate': uploadMedia.releaseDate,
-        'mediaType': uploadMedia.mediaType,
-        'overview': uploadMedia.overview,
-        'timestamp': FieldValue.serverTimestamp(),
-      });
-    }
+        // Fetch all ratings for this media
+        QuerySnapshot ratingsSnapshot =
+            await doc.reference.collection('ratings').get();
 
-    // Add/update user's rating
-    await ratingRef.set({
-      'rating': rating,
-      'review': review,
-      'timestamp': FieldValue.serverTimestamp(),
+        List<Rating> ratings = ratingsSnapshot.docs.map((ratingDoc) {
+          var ratingData = ratingDoc.data() as Map<String, dynamic>;
+          return Rating(
+            userId: ratingDoc.id,
+            score: (ratingData['rating'] as num?)?.toDouble() ?? 0.0,
+            review: ratingData['review'] ?? "",
+          );
+        }).toList();
+
+        // Calculate average rating
+        double averageRating = ratings.isNotEmpty
+            ? ratings.map((r) => r.score).reduce((a, b) => a + b) / ratings.length
+            : 0.0;
+
+        // Update media object with ratings and average rating
+        media = media.copyWith(
+          ratings: ratings,
+          averageRating: averageRating,
+        );
+
+        medias.add(media);
+      }
+
+      return medias;
     });
   }
 
+  Future<List<Media>> getMedias() async {
+    QuerySnapshot snapshot = await _mediaCollection.get();
 
-  /// Retrieves all medias from Firestore
-  Future<List<Map<String, dynamic>>> getMedias() async {
-    try {
-      QuerySnapshot snapshot = await _firestore.collection('medias').get();
-      return snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
-    } catch (e) {
-      print("Error getting medias: $e");
-      return [];
+    List<Media> medias = [];
+
+    for (var doc in snapshot.docs) {
+      Media media = doc.data() as Media;
+
+      // Fetch ratings for this media
+      QuerySnapshot ratingsSnapshot =
+          await doc.reference.collection('ratings').get();
+
+      List<Rating> ratings = ratingsSnapshot.docs.map((ratingDoc) {
+        var ratingData = ratingDoc.data() as Map<String, dynamic>;
+        return Rating(
+          userId: ratingDoc.id,
+          score: (ratingData['rating'] as num?)?.toDouble() ?? 0.0,
+          review: ratingData['review'] ?? "",
+        );
+      }).toList();
+
+      // Calculate average rating
+      double averageRating = ratings.isNotEmpty
+          ? ratings.map((r) => r.score).reduce((a, b) => a + b) / ratings.length
+          : 0.0;
+
+      // Update media object with ratings and average rating
+      media = media.copyWith(
+        ratings: ratings,
+        averageRating: averageRating,
+      );
+
+      medias.add(media);
     }
+
+    return medias;
   }
 }
+*/
