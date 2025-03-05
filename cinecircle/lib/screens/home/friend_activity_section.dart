@@ -1,33 +1,126 @@
 import 'package:flutter/material.dart';
-import 'package:cinecircle/models/rating.dart';
+import 'package:cinecircle/models/media.dart';
+import 'package:cinecircle/services/firestore_service.dart';
 
 class FriendActivitySection extends StatefulWidget {
-  final List<Rating> reviews;
+  final void Function(Media) onMediaTap;
 
-  const FriendActivitySection({required this.reviews, super.key});
+  const FriendActivitySection({
+    required this.onMediaTap,
+    super.key,
+  });
 
   @override
   _FriendActivitySectionState createState() => _FriendActivitySectionState();
 }
 
 class _FriendActivitySectionState extends State<FriendActivitySection> {
+  late Future<List<Media>> mediaWithReviewsFuture;
+  
+  void fetchMedia() {
+    setState(() {
+      mediaWithReviewsFuture = FirestoreService().getAllFriendMedia();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    mediaWithReviewsFuture = FirestoreService().getAllFriendMedia();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Friend Activity", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        if (widget.reviews.isEmpty)
-          Text("No reviews yet.")
-        else
-          Column(
-            children: widget.reviews.map((rating) {
-              return ListTile(
-                title: Text("${rating.username} rated ${rating.score}/5"),
-                subtitle: Text(rating.comment ?? ""),
-              );
-            }).toList(),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            "Friend Activity",
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
+        ),
+
+        FutureBuilder<List<Media>>(
+          future: mediaWithReviewsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text("Error loading reviews."),
+              );
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text("No reviews yet."),
+              );
+            } else {
+              final mediaWithReviews = snapshot.data!;
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(), // Uses HomePage scrolling behavior
+                itemCount: mediaWithReviews.length,
+                itemBuilder: (context, index) {
+                  final media = mediaWithReviews[index];
+
+                  return GestureDetector(
+                    onTap: () async {
+                      await FirestoreService().getFriendReviewsForMedia(media);
+                      setState(() {}); // Ensure UI updates after fetching
+                      fetchMedia();
+                      widget.onMediaTap(media);
+                    },
+                    child: Card(
+                      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                            child: Image.network(
+                              media.imageUrl,
+                              height: 250,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  media.title,
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(height: 5),
+                                Text(
+                                  "Average Rating: ${media.averageRating.toStringAsFixed(1)}/5",
+                                  style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                                ),
+                                Text(
+                                  "Total Reviews: ${media.reviewCount}",
+                                  style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            }
+          },
+        ),
       ],
     );
   }

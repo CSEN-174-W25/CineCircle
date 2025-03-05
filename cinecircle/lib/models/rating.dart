@@ -1,22 +1,27 @@
 class Rating {
-  final String userId;
   final String username;
   final double score;
-  String? comment;
+  String? review;
 
   Rating({
-    required this.userId, 
-    required this.username, 
-    required this.score, 
-    this.comment
+    required this.username,
+    required this.score,
+    this.review,
   });
 
   factory Rating.fromJson(Map<String, dynamic> json) {
     return Rating(
-      userId: json['userId'],
-      username: json['username'],
-      score: (json['score'] as num).toDouble(),
-      comment: json['comment'],
+      username: json['username'] ?? "Anonymous", 
+      score: (json['score'] as num?)?.toDouble() ?? 0.0, 
+      review: json['review'] ?? "", 
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "username": username,
+      "score": score,
+      "review": review,
+    };
   }
 }

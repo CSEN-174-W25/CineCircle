@@ -1,15 +1,14 @@
+import 'package:cinecircle/screens/home/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../home/home_page.dart';
+import 'package:cinecircle/screens/signin/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
-
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  LoginScreenState createState() => LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {    // TODO: Add firebase from JS
+class LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -22,7 +21,10 @@ class _LoginScreenState extends State<LoginScreen> {    // TODO: Add firebase fr
       return;
     }
 
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _errorMessage = ''; // Reset error message
+    });
 
     try {
       await _auth.signInWithEmailAndPassword(
@@ -32,23 +34,36 @@ class _LoginScreenState extends State<LoginScreen> {    // TODO: Add firebase fr
 
       if (!mounted) return;
 
-      Navigator.pushReplacement(
+            Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => HomePage()),
       );
-    } catch (e) {
-      setState(() => _errorMessage = _getAuthErrorMessage(e.toString()));
+      
+    } on FirebaseAuthException catch (e) {
+      setState(() {
+        _errorMessage = _getAuthErrorMessage(e.code);
+      });
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
 
-  // Function to handle Firebase authentication errors
-  String _getAuthErrorMessage(String error) {
-    if (error.contains('user-not-found')) return "No account found for this email.";
-    if (error.contains('wrong-password')) return "Incorrect password.";
-    if (error.contains('network-request-failed')) return "Check your internet connection.";
-    return "Login failed. Please try again.";
+  // A list of possible error messages
+  String _getAuthErrorMessage(String errorCode) {
+    switch (errorCode) {
+      case 'user-not-found':
+        return "No account found for this email.";
+      case 'wrong-password':
+        return "Incorrect password.";
+      case 'invalid-email':
+        return "Invalid email format.";
+      case 'too-many-requests':
+        return "Too many login attempts. Try again later.";
+      case 'network-request-failed':
+        return "Check your internet connection.";
+      default:
+        return "Login failed. Please try again.";
+    }
   }
 
   @override
@@ -81,6 +96,13 @@ class _LoginScreenState extends State<LoginScreen> {    // TODO: Add firebase fr
                     onPressed: _signIn,
                     child: Text('Sign In'),
                   ),
+            TextButton(
+                onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterScreen()),
+);
+              },
+              child: Text("Don't have an account? Sign up"),
+            ),
           ],
         ),
       ),

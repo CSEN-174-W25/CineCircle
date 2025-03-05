@@ -1,5 +1,3 @@
-// User Profile Page
-
 import 'package:flutter/material.dart';
 import 'package:cinecircle/models/movie.dart';
 import 'package:cinecircle/models/user.dart';

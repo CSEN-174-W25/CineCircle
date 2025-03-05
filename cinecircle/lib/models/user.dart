@@ -5,13 +5,15 @@ class User{
     final String userId;
     String username;
     double averageRating;
-   // List<User> friendList;
     int friendsAmount;
     String picUrl;  //Profile picture URL
     List<Movie> top4;
     String bio;
     int watched;
     List<MovieEntry> watchlist;
+    List<String> reviewedMedias; 
+    List<String> friends;
+    int totalReviews;
 
     User({
         required this.userId,
@@ -20,10 +22,12 @@ class User{
         this.friendsAmount = 0,
         required this.picUrl,
         this.watched = 0,
+        required this.friends,
         List<Movie>? top4,
         List<MovieEntry>? watchlist,
+        required this.reviewedMedias,
+        this.totalReviews = 0,
         required this.bio
-        //List<User> friendList
     }): top4 = top4 ?? [], watchlist = watchlist ?? [];
 
     factory User.fromJson(Map<String, dynamic> json){
@@ -31,6 +35,9 @@ class User{
             userId: json['userId'],
             username: json['username'],
             averageRating:  (json['score'] as num).toDouble(),
+            reviewedMedias: List<String>.from(json['reviewedMedias'] ?? []),
+            friends: List<String>.from(json['friends'] ?? []),
+            totalReviews: json['totalReviews'] ?? 0,
             friendsAmount: (json['friendsAmount'] as num).toInt(),
             watched: (json['watched'] as num).toInt(),
             picUrl: json['picUrl'] ?? '',
@@ -39,4 +46,15 @@ class User{
             top4: (json['top4'] as List?)?.map((item) => Movie.fromJson(item)).toList() ?? [],
         ); 
     }
+
+    Map<String, dynamic> toJson() {
+    return {
+      'userId': userId,
+      'username': username,
+      'friendsAmount': friendsAmount,
+      'reviewedMedias': reviewedMedias,
+      'friends': friends,
+      'averageRating': averageRating,
+      'totalReviews': totalReviews,
+    };
 }
