@@ -6,7 +6,7 @@ class FriendRequestButton extends StatefulWidget {
 }
 
 class _FriendRequestButtonState extends State<FriendRequestButton> {
-  String buttonText = "Send Request";
+  String buttonText = "Add Friend";
   bool isRequested = false;
 
   void handleRequest() {
