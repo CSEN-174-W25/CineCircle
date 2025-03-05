@@ -30,6 +30,8 @@ class _ProfilePageState extends State<ProfilePage> {
     picUrl: "https://static.vecteezy.com/system/resources/thumbnails/019/879/186/small_2x/user-icon-on-transparent-background-free-png.png",
     bio: "Yippee0YippeeYippeeYippeeYippeeYippeeYippeeYippeeYippee ദ്ദി •⩊• )",
     watched: 45,
+    friends: ["Bingus", "Bongus", "Bizzle", "Bungle"],
+    reviewedMedias: ["Pluh"],
     top4: [
       Movie(
         title: "La Haine",
