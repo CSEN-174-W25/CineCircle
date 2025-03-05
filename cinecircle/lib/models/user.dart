@@ -1,4 +1,5 @@
 import 'movie.dart';
+import 'movie_entry.dart';
 
 class User{
     final String userId;
@@ -9,6 +10,8 @@ class User{
     String picUrl;  //Profile picture URL
     List<Movie> top4;
     String bio;
+    int watched;
+    List<MovieEntry> watchlist;
 
     User({
         required this.userId,
@@ -16,10 +19,12 @@ class User{
         this.averageRating = 0.0,
         this.friendsAmount = 0,
         required this.picUrl,
+        this.watched = 0,
         List<Movie>? top4,
+        List<MovieEntry>? watchlist,
         required this.bio
         //List<User> friendList
-    }): top4 = top4 ?? [];
+    }): top4 = top4 ?? [], watchlist = watchlist ?? [];
 
     factory User.fromJson(Map<String, dynamic> json){
         return User(
@@ -27,9 +32,11 @@ class User{
             username: json['username'],
             averageRating:  (json['score'] as num).toDouble(),
             friendsAmount: (json['friendsAmount'] as num).toInt(),
+            watched: (json['watched'] as num).toInt(),
             picUrl: json['picUrl'] ?? '',
             bio: json['bio'],
-            top4: (json['top4'] as List?)?.map((item) => Movie.fromJson(item)).toList() ?? []
+            watchlist: (json['watchlist'] as List?)?.map((item) => MovieEntry.fromJson(item)).toList() ?? [],
+            top4: (json['top4'] as List?)?.map((item) => Movie.fromJson(item)).toList() ?? [],
         ); 
     }
 }
