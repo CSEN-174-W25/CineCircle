@@ -1,19 +1,19 @@
-import 'movie.dart';
+import 'media.dart';
 
-class MovieEntry {
-  final Movie movie;
+class MediaEntry {
+  final Media media;
   final DateTime watchdate;
   double? score;
 
-  MovieEntry({
-      required this.movie,
+  MediaEntry({
+      required this.media,
       required this.watchdate,
       this.score     //Default -1 so that rating invisible when unrated
   });
 
-  factory MovieEntry.fromJson(Map<String, dynamic> json){
-    return MovieEntry(
-      movie: Movie.fromJson(json['movie']),
+  factory MediaEntry.fromJson(Map<String, dynamic> json){
+    return MediaEntry(
+      media: Media.fromJson(json['media']),
       watchdate: DateTime.parse(json['watchdate']),
       score: (json['score'] as num).toDouble()
     );

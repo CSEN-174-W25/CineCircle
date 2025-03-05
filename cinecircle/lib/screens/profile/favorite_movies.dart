@@ -1,7 +1,7 @@
 // Displays the user's top 4 favorite movies
 import 'package:flutter/material.dart';
 import 'package:cinecircle/models/user.dart';
-import 'package:cinecircle/models/movie.dart';
+import 'package:cinecircle/models/media.dart';
 
 class FavoriteMovies extends StatefulWidget{
   final User user;
@@ -20,11 +20,11 @@ class _FavoriteMoviesState extends State<FavoriteMovies> {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: widget.user.top4.map((movie) { // Iterate over top4 movies
+      children: widget.user.top4.map((media) { // Iterate over top4 movies
         return Padding(
           padding: const EdgeInsets.all(1.0),
           child: Image.network(
-            movie.imageUrl,
+            media.imageUrl,
             width: 90, // Set a fixed width
             height: 140, // Set a fixed height
             fit: BoxFit.cover, // Ensure the image fits well

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cinecircle/models/movie.dart';
+import 'package:cinecircle/models/media.dart';
 import 'package:cinecircle/models/user.dart';
 import 'package:cinecircle/screens/profile/average_rating.dart';
 import 'package:cinecircle/screens/profile/user_description.dart';
@@ -15,13 +15,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  /*
-    void _friended(User user){
-        user.friendsAmount += 1;    // Increases user's friend count
-        //Need to add specific user who friended to the friendlist
-    }
-  */
-
   User johnDoe = User(
     userId: "doe3954",
     username: "John Doe",
@@ -33,36 +26,66 @@ class _ProfilePageState extends State<ProfilePage> {
     friends: ["Bingus", "Bongus", "Bizzle", "Bungle"],
     reviewedMedias: ["Pluh"],
     top4: [
-      Movie(
+      Media(
         title: "La Haine",
         imageUrl: "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/iH8saz6s0Z8SPPrKaMI2KrRzTED.jpg",
+        releaseDate: "Eh",
+        id: 1,
+        mediaType: "Movie",
+        overview:"Eh",
+        reviewCount: 5,
       ),
-      Movie(
+      Media(
         title: "Ghost Dog: The Way of the Samurai",
         imageUrl: "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/gkH4zOxIfbb4BEbk9Q4cVOEpDaY.jpg",
+        releaseDate: "Eh",
+        id: 2,
+        mediaType: "Movie",
+        overview:"Eh",
+        reviewCount: 5
       ),
-      Movie(
+      Media(
         title: "Buffalo '66",
-        imageUrl: "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/fxzXFzbSGNA52NHQCMqQiwzMIQw.jpg"
+        imageUrl: "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/fxzXFzbSGNA52NHQCMqQiwzMIQw.jpg",
+        releaseDate: "Eh",
+        id: 3,
+        mediaType:"Movie",
+        overview:"Eh",
+        reviewCount: 5
       ),
-      Movie(
+      Media(
         title: "Clerks",
-        imageUrl: "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/9IiSgiq4h4siTIS9H3o4nZ3h5L9.jpg"
+        imageUrl: "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/9IiSgiq4h4siTIS9H3o4nZ3h5L9.jpg",
+        releaseDate: "Eh",
+        id: 4,
+        mediaType:"Movie",
+        overview:"Eh",
+        reviewCount: 5
       )
     ],
     watchlist: [
-      MovieEntry(
-        movie: Movie(
+      MediaEntry(
+        media: Media(
           title: "La Haine",
           imageUrl: "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/iH8saz6s0Z8SPPrKaMI2KrRzTED.jpg",
+          releaseDate: "Eh",
+          id: 5,
+          mediaType:"Movie",
+          overview:"Eh",
+          reviewCount: 3
           ),
         watchdate: DateTime.utc(1989, 11, 9),
         score: 4.5
       ),
-      MovieEntry(
-        movie: Movie(
+      MediaEntry(
+        media: Media(
           title: "Ghost Dog: The Way of the Samurai",
           imageUrl: "https://media.themoviedb.org/t/p/w300_and_h450_bestv2/gkH4zOxIfbb4BEbk9Q4cVOEpDaY.jpg",
+          releaseDate: "Eh",
+          id: 6,
+          mediaType:"Movie",
+          overview:"Eh",
+          reviewCount:3
         ),
         watchdate: DateTime.utc(1991, 8, 7),
         score: 4.8

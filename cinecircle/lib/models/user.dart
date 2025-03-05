@@ -1,4 +1,4 @@
-import 'movie.dart';
+import 'media.dart';
 import 'movie_entry.dart';
 
 class User{
@@ -7,10 +7,10 @@ class User{
     double averageRating;
     int friendsAmount;
     String picUrl;  //Profile picture URL
-    List<Movie> top4;
+    List<Media> top4;
     String bio;
     int watched;
-    List<MovieEntry> watchlist;
+    List<MediaEntry> watchlist;
     List<String> reviewedMedias; 
     List<String> friends;
     int totalReviews;
@@ -23,8 +23,8 @@ class User{
         required this.picUrl,
         this.watched = 0,
         required this.friends,
-        List<Movie>? top4,
-        List<MovieEntry>? watchlist,
+        List<Media>? top4,
+        List<MediaEntry>? watchlist,
         required this.reviewedMedias,
         this.totalReviews = 0,
         required this.bio
@@ -42,8 +42,8 @@ class User{
             watched: (json['watched'] as num).toInt(),
             picUrl: json['picUrl'] ?? '',
             bio: json['bio'],
-            watchlist: (json['watchlist'] as List?)?.map((item) => MovieEntry.fromJson(item)).toList() ?? [],
-            top4: (json['top4'] as List?)?.map((item) => Movie.fromJson(item)).toList() ?? [],
+            watchlist: (json['watchlist'] as List?)?.map((item) => MediaEntry.fromJson(item)).toList() ?? [],
+            top4: (json['top4'] as List?)?.map((item) => Media.fromJson(item)).toList() ?? [],
         ); 
     }
 

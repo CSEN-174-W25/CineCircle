@@ -1,7 +1,7 @@
 import 'package:cinecircle/screens/home/home_page.dart';
 import 'package:cinecircle/screens/profile/profile_page.dart';
 //import 'package:cinecircle/widgets/movie_detail.dart';
-import 'package:cinecircle/models/movie.dart';
+import 'package:cinecircle/models/media.dart';
 import 'package:cinecircle/screens/signin/login_screen.dart'; 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';

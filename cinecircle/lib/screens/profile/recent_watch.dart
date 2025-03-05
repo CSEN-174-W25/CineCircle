@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:cinecircle/models/user.dart';
 import 'package:cinecircle/models/movie_entry.dart';
-import 'package:cinecircle/models/movie.dart';
+import 'package:cinecircle/models/media.dart';
 
 class RecentWatch extends StatefulWidget{
   final User user;
@@ -25,14 +25,14 @@ class _RecentWatchState extends State<RecentWatch>{
         return Row(
           children: [
             Image.network(
-              watchlist.movie.imageUrl,
+              watchlist.media.imageUrl,
               width: 90, 
               height: 140,
               fit: BoxFit.cover,
             ),
             Column(
               children: [
-                Text(watchlist.movie.title),
+                Text(watchlist.media.title),
                 Text('Watched on ${watchlist.watchdate}'),
               ]
             )
