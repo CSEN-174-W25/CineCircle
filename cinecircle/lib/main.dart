@@ -26,9 +26,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'CineCircle',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: ProfilePage(),
+      //home: ProfilePage(),
       //home: HomePage(),
-      // home: AuthCheck(), TODO: Add auth check
+      home: AuthCheck(), //TODO: Add auth check
     );
   }
 }
