@@ -147,7 +147,7 @@ Future<List<Media>> getAllFriendMedia() async {
 
     /*
     media.ratings = allRatings;
-    media.reviewCount = allRatings.length; // ✅ Correctly updating review count
+    media.reviewCount = allRatings.length; // Correctly updating review count
 
     double totalVal = 0;
     for (var review in allRatings) {

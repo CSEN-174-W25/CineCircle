@@ -23,12 +23,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'CineCircle',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: AuthCheck(), // ✅ Use AuthCheck to manage authentication state
+      home: AuthCheck(), // Manage authentication state
     );
   }
 }
 
-// ✅ Authentication Check Widget
+// Authentication Check
 class AuthCheck extends StatelessWidget {
   const AuthCheck({super.key});
 
@@ -43,9 +43,9 @@ class AuthCheck extends StatelessWidget {
           );
         }
         if (snapshot.hasData) {
-          return HomePage(); // User is logged in, go to HomePage
+          return HomePage(); // If user is logged in, sent to to HomePage
         }
-        return LoginScreen(); // User is NOT logged in, go to LoginScreen
+        return LoginScreen(); // If user is not logged in, sent to LoginScreen
       },
     );
   }
