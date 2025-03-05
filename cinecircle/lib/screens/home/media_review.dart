@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cinecircle/models/media.dart';
 import 'package:cinecircle/models/rating.dart';
 import 'package:five_pointed_star/five_pointed_star.dart';
@@ -15,19 +17,39 @@ class MediaReview extends StatefulWidget {
 
 class MediaReviewState extends State<MediaReview> {
   final TextEditingController _controller = TextEditingController();
-  double _rating = 0.0; 
+  double _rating = 0.0;
   bool isSubmitting = false;
   double textBoxHeight = 50;
+  String? _username;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUsername();
+  }
+
+  /// Retrieve the current user's username from Firestore
+  Future<void> _fetchUsername() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+    if (userDoc.exists) {
+      setState(() {
+        _username = userDoc['username'] ?? "Anonymous";
+      });
+    }
+  }
 
   void _submitReview() {
-    if (_controller.text.isEmpty || isSubmitting || _rating == 0.0) return; 
-    
+    if (_controller.text.isEmpty || isSubmitting || _rating == 0.0 || _username == null) return;
+
     setState(() {
       isSubmitting = true;
     });
 
     Rating newRating = Rating(
-      userId: "user123", 
+      username: _username!,
       score: _rating,
       review: _controller.text,
     );
@@ -56,7 +78,13 @@ class MediaReviewState extends State<MediaReview> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Share Your Thoughts", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            
+
+            if (_username == null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Text("Loading username...", style: TextStyle(fontSize: 14, color: Colors.grey)),
+              ),
+
             Row(
               children: [
                 Text("Your Rating:"),
@@ -69,10 +97,10 @@ class MediaReviewState extends State<MediaReview> {
                 ),
               ],
             ),
-            
+
             SizedBox(height: 10),
 
-            // Dynamic TextField Height
+            // Dynamic TextField Height (since search bar covers part of searched movies)
             ConstrainedBox(
               constraints: BoxConstraints(
                 maxHeight: 200,
@@ -100,7 +128,7 @@ class MediaReviewState extends State<MediaReview> {
             SizedBox(height: 10),
 
             ElevatedButton(
-              onPressed: isSubmitting ? null : _submitReview, // Prevent double submission
+              onPressed: isSubmitting || _username == null ? null : _submitReview,
               child: Text("Submit"),
             ),
           ],

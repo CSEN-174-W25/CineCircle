@@ -45,6 +45,14 @@ class YourThoughtsSectionState extends State<YourThoughtsSection> {
     }
   }
 
+  @override
+  void dispose() {
+    // Used to pause firebase calls when user is typing to avoid excessive calls
+    _debounce?.cancel();
+    _searchController.dispose();
+    super.dispose();
+  }
+
   Future<void> fetchTrendingMedias() async {
     if (cachedTrendingMedias.isNotEmpty) return;
 
@@ -55,10 +63,12 @@ class YourThoughtsSectionState extends State<YourThoughtsSection> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        setState(() {
-          cachedTrendingMedias =
-              (data["results"] as List).map((item) => Media.fromJson(item)).toList();
-        });
+        if (mounted) {
+          setState(() {
+            cachedTrendingMedias =
+                (data["results"] as List).map((item) => Media.fromJson(item)).toList();
+          });
+        }
       } else {
         throw Exception("Failed to load trending content");
       }
@@ -69,8 +79,11 @@ class YourThoughtsSectionState extends State<YourThoughtsSection> {
 
   void _onSearchChanged() {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
+
     _debounce = Timer(Duration(milliseconds: 2000), () {
-      searchMoviesAndShows(_searchController.text);
+      if (mounted) {
+        searchMoviesAndShows(_searchController.text);
+      }
     });
   }
 
@@ -83,29 +96,34 @@ class YourThoughtsSectionState extends State<YourThoughtsSection> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        setState(() {
-          searchResults = (data["results"] as List)
-              .where((item) => item["poster_path"] != null && item["poster_path"].isNotEmpty)
-              .map((item) => Media.fromJson(item))
-              // .take(10) // TODO: Use if we want to limit search results
-              .toList();
-        });
+        if (mounted) {
+          setState(() {
+            searchResults = (data["results"] as List)
+                .where((item) => item["poster_path"] != null && item["poster_path"].isNotEmpty)
+                .map((item) => Media.fromJson(item))
+                .toList();
+          });
+        }
       } else {
         throw Exception("Failed to load search results");
       }
     } catch (error) {
       print("Network error: $error");
-      setState(() {
-        searchResults = [];
-      });
+      if (mounted) {
+        setState(() {
+          searchResults = [];
+        });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Network error: Please check your internet connection")),
-      );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Network error: Please check your internet connection")),
+        );
+      }
     }
   }
 
   void onMediaSelected(Media media) {
+    if (!mounted) return; // Ensure widget is still in the tree before updating UI
+
     setState(() {
       if (selectedMedia == media) {
         selectedMedia = null; // Unselect if already selected
@@ -124,50 +142,50 @@ class YourThoughtsSectionState extends State<YourThoughtsSection> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-            Container(
-              color: const Color.fromARGB(255, 255, 255, 255), // Change background color
-              padding: const EdgeInsets.only(top: 20.0, bottom: 5.0, left: 10.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Your Thoughts",
-                  style: TextStyle(
-                    fontSize: 23,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 0, 0, 0),
-                  ),
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.only(top: 20.0, bottom: 5.0, left: 10.0),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Your Thoughts",
+                style: TextStyle(
+                  fontSize: 23,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
               ),
             ),
+          ),
 
           // Trending/Search Toggle Buttons
           Container(
             padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 255, 255, 255),
-            ),
+            decoration: BoxDecoration(color: Colors.white),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      setState(() {
-                        isSearching = false;
-                        fetchTrendingMedias();
-                      });
+                      if (mounted) {
+                        setState(() {
+                          isSearching = false;
+                          fetchTrendingMedias();
+                        });
+                      }
                     },
                     child: Container(
                       padding: EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: !isSearching ? const Color.fromARGB(255, 255, 52, 52) : const Color.fromARGB(255, 253, 222, 222),
+                        color: !isSearching ? Colors.red : Colors.red[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Center(
                         child: Text(
                           "Trending",
                           style: TextStyle(
-                            color: !isSearching ? const Color.fromARGB(255, 255, 255, 255) : const Color.fromARGB(255, 241, 18, 18),
+                            color: !isSearching ? Colors.white : Colors.red[800],
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -178,21 +196,23 @@ class YourThoughtsSectionState extends State<YourThoughtsSection> {
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      setState(() {
-                        isSearching = true;
-                      });
+                      if (mounted) {
+                        setState(() {
+                          isSearching = true;
+                        });
+                      }
                     },
                     child: Container(
                       padding: EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: isSearching ? const Color.fromARGB(255, 194, 0, 161) : const Color.fromARGB(255, 247, 208, 255),
+                        color: isSearching ? Colors.purple : Colors.purple[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Center(
                         child: Text(
                           "Search",
                           style: TextStyle(
-                            color: isSearching ? const Color.fromARGB(255, 255, 255, 255) : const Color.fromARGB(255, 194, 0, 161),
+                            color: isSearching ? Colors.white : Colors.purple[800],
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -230,10 +250,10 @@ class YourThoughtsSectionState extends State<YourThoughtsSection> {
 
           SizedBox(height: 10),
 
-          // Movie List
+          // Show Movie List w/ dynmaic height depending on selected media tab
           AnimatedContainer(
             duration: Duration(milliseconds: 300),
-            height: selectedMedia == null ? 380 : 570, // Prevents overflow by allowing less space for searched movies
+            height: selectedMedia == null ? 380 : 570,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: isSearching ? searchResults.length : cachedTrendingMedias.length,

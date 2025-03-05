@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'modify_friends_screen.dart';
 
 class NotificationPage extends StatefulWidget {
   @override
@@ -46,6 +47,21 @@ class _NotificationPageState extends State<NotificationPage> {
           ),
         ),
       ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ModifyFriendsScreen()),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          child: Text("Add Friend"),
+        ),
+      )
     );
   }
 }

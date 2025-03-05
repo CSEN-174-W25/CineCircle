@@ -8,6 +8,7 @@ class Media {
   final String mediaType;
   final String overview;
   final int id;
+  int reviewCount;
   double averageRating;
   List<Rating> ratings;
 
@@ -18,15 +19,13 @@ class Media {
     required this.mediaType,
     required this.overview,
     required this.imageUrl,
+    required this.reviewCount,
     this.averageRating = 0.0,
     List<Rating>? ratings,
   }) : ratings = ratings ?? [];
 
-  // Parse JSON from TMDb API
   factory Media.fromJson(Map<String, dynamic> json) {
     String usaDate = "Unknown";
-
-    // Use release_date for movies, first_air_date for TV shows
     String? rawDate = json['release_date'] ?? json['first_air_date'];
 
     if (rawDate != null && rawDate.isNotEmpty) {
@@ -44,18 +43,42 @@ class Media {
       imageUrl: (json['poster_path'] != null && json['poster_path'].isNotEmpty)
           ? "https://image.tmdb.org/t/p/w500${json['poster_path']}"
           : "assets/images/placeholder.png",  // Uses placeholder image if missing
-      averageRating: (json['vote_average'] as num?)?.toDouble() ?? 0.0,
+      averageRating: 0.0,
       id: json['id'] as int? ?? 0,
       mediaType: json['media_type'] ?? "unknown",
       overview: json['overview'] ?? "",
       ratings: [],
+      reviewCount: json.containsKey('vote_count') 
+          ? (json['vote_count'] as num?)?.toInt() ?? 0 
+          : 0,
     );
   }
 
-  void addRating(Rating newRating) {
-    ratings.add(newRating);
-    averageRating = ratings.isNotEmpty
-        ? ratings.fold(0.0, (sum, r) => sum + r.score) / ratings.length
-        : 0.0;
+  /// Parse from Firestore
+  factory Media.fromFirestore(Map<String, dynamic> json) {
+    return Media(
+      title: json['title'] ?? "Unknown",
+      releaseDate: json['releaseDate'] ?? "Unknown",
+      imageUrl: json['imageUrl'] ?? "assets/images/placeholder.png",
+      averageRating: (json['averageRating'] as num?)?.toDouble() ?? 0.0,
+      id: json['mediaId'] as int? ?? 0,
+      mediaType: json['mediaType'] ?? "unknown",
+      overview: json['overview'] ?? "",
+      reviewCount: (json['reviewCount'] as num?)?.toInt() ?? 0,
+    );
+  }
+
+  /// Convert to Firestore Format
+  Map<String, dynamic> toFirestore() {
+    return {
+      'title': title,
+      'releaseDate': releaseDate,
+      'imageUrl': imageUrl,
+      'averageRating': averageRating,
+      'mediaId': id,
+      'mediaType': mediaType,
+      'overview': overview,
+      'reviewCount': reviewCount,
+    };
   }
 }

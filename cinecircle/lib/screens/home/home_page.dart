@@ -6,6 +6,9 @@ import 'package:cinecircle/screens/profile/profile_page.dart';
 import 'package:cinecircle/widgets/media_detail.dart';
 import 'package:cinecircle/models/media.dart';
 import 'package:cinecircle/models/rating.dart';
+import 'package:cinecircle/services/firestore_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cinecircle/screens/signin/login_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,30 +20,10 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   Media? selectedMedia;
-  List<Media> medias = [];
-  List<Rating> friendReviews = [];
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-    });
-  }
-
-  void _handleReviewAdded(Media media, Rating rating) {
-    setState(() {
-      media.addRating(rating); 
-
-      // Ensure media is added only once
-      if (!medias.contains(media)) {
-        medias.add(media);
-      }
-
-      // Prevent duplicate reviews
-      bool isDuplicate = friendReviews.any((r) =>
-          r.userId == rating.userId && r.review == rating.review && r.score == rating.score);
-      if (!isDuplicate) {
-        friendReviews.add(rating);
-      }
     });
   }
 
@@ -59,10 +42,8 @@ class HomePageState extends State<HomePage> {
                 });
               },
               onReviewAdded: (Media media, Rating rating) {
-                _handleReviewAdded(media, rating);
-
-                // Unselect media after review submission
-                setState(() {
+                    FirestoreService().saveReview(reviewedMedia: media, userReview: rating);
+                setState(() {         // Unselect media after review submission
                   selectedMedia = null;
                 });
               },
@@ -71,8 +52,6 @@ class HomePageState extends State<HomePage> {
             SizedBox(height: 20),
 
             FriendActivitySection(
-              reviews: friendReviews,
-              medias: medias, 
               onMediaTap: (Media media) {
                 Navigator.push(
                   context,
@@ -103,6 +82,18 @@ class HomePageState extends State<HomePage> {
                   fontWeight: FontWeight.w900,
                 ),
               ),
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.logout),
+                  onPressed: () async {
+                    await FirebaseAuth.instance.signOut();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                    );
+                  },
+                ),
+              ],
               centerTitle: true,
               flexibleSpace: Container(
                 decoration: BoxDecoration(

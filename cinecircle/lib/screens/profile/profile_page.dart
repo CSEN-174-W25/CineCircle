@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -21,17 +22,31 @@ class _ProfilePageState extends State<ProfilePage> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ).createShader(bounds),
-          child: Text(
-            "Profile",
-            style: TextStyle(
-              color: Colors.white, // This color is masked by above gradient
-              fontFamily: "Inter Tight",
-              fontSize: 28,
-              fontWeight: FontWeight.w900,
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Profile",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: "Inter Tight",
+                  fontSize: 28,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              SizedBox(width: 10),
+              Text(
+                "${FirebaseAuth.instance.currentUser?.uid ?? 'UserID: Unknown'}",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: "Inter Tight",
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
           ),
         ),
-
         centerTitle: true,
         flexibleSpace: Container(
           decoration: BoxDecoration(

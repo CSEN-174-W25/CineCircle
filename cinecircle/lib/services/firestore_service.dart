@@ -1,90 +1,160 @@
-/*import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cinecircle/models/media.dart';
 import 'package:cinecircle/models/rating.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class FirestoreService {
-  /// 🔹 Firestore Collection Reference (Auto Converts `Media`)
-  final CollectionReference<Media> _mediaCollection =
-      FirebaseFirestore.instance.collection('medias').withConverter<Media>(
-            fromFirestore: (snap, _) => Media.fromJson(snap.data()!),
-            toFirestore: (media, _) => media.toJson(),
-          );
+Future<void> saveReview({
+  required Media reviewedMedia,
+  required Rating userReview,
+}) async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return;
 
-  /// Fetches movies as a stream (real-time updates)
-  Stream<List<Media>> streamMedias() {
-    return _mediaCollection.snapshots().asyncMap((snapshot) async {
-      List<Media> medias = [];
+  final userRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+  final mediaRef = FirebaseFirestore.instance.collection('media').doc(reviewedMedia.id.toString());
+  final reviewRef = mediaRef.collection('reviews').doc(user.uid); // Check id so each user can have one review per movie
 
-      for (var doc in snapshot.docs) {
-        Media media = doc.data() as Media;
-
-        // Fetch all ratings for this media
-        QuerySnapshot ratingsSnapshot =
-            await doc.reference.collection('ratings').get();
-
-        List<Rating> ratings = ratingsSnapshot.docs.map((ratingDoc) {
-          var ratingData = ratingDoc.data() as Map<String, dynamic>;
-          return Rating(
-            userId: ratingDoc.id,
-            score: (ratingData['rating'] as num?)?.toDouble() ?? 0.0,
-            review: ratingData['review'] ?? "",
-          );
-        }).toList();
-
-        // Calculate average rating
-        double averageRating = ratings.isNotEmpty
-            ? ratings.map((r) => r.score).reduce((a, b) => a + b) / ratings.length
-            : 0.0;
-
-        // Update media object with ratings and average rating
-        media = media.copyWith(
-          ratings: ratings,
-          averageRating: averageRating,
-        );
-
-        medias.add(media);
-      }
-
-      return medias;
-    });
+  // Ensure the media document exists before adding a review
+  final mediaSnapshot = await mediaRef.get();
+  if (!mediaSnapshot.exists) {
+    await mediaRef.set(reviewedMedia.toFirestore());
   }
 
-  Future<List<Media>> getMedias() async {
-    QuerySnapshot snapshot = await _mediaCollection.get();
+  // Save the review in `reviews` subcollection
+  await reviewRef.set({
+    'userId': user.uid, // 🔹 Ensures reviews are linked to users
+    'username': userReview.username,
+    'review': userReview.review,
+    'score': userReview.score,
+    'timestamp': FieldValue.serverTimestamp(),
+  });
 
-    List<Media> medias = [];
+  // Recalculate user's total average rating
+  final userReviewsSnapshot = await FirebaseFirestore.instance
+      .collectionGroup('reviews')
+      .where('userId', isEqualTo: user.uid)
+      .get();
 
-    for (var doc in snapshot.docs) {
-      Media media = doc.data() as Media;
+  double totalUserRating = 0;
+  int userReviewCount = userReviewsSnapshot.docs.length;
 
-      // Fetch ratings for this media
-      QuerySnapshot ratingsSnapshot =
-          await doc.reference.collection('ratings').get();
+  for (var doc in userReviewsSnapshot.docs) {
+    totalUserRating += (doc['score'] as num).toDouble();
+  }
 
-      List<Rating> ratings = ratingsSnapshot.docs.map((ratingDoc) {
-        var ratingData = ratingDoc.data() as Map<String, dynamic>;
-        return Rating(
-          userId: ratingDoc.id,
-          score: (ratingData['rating'] as num?)?.toDouble() ?? 0.0,
-          review: ratingData['review'] ?? "",
-        );
-      }).toList();
+  double newUserAvgRating = userReviewCount > 0 ? totalUserRating / userReviewCount : 0.0;
 
-      // Calculate average rating
-      double averageRating = ratings.isNotEmpty
-          ? ratings.map((r) => r.score).reduce((a, b) => a + b) / ratings.length
-          : 0.0;
+  // Update user's reviewed list to contain mediaId
+  await userRef.update({
+    'reviewedMedias': FieldValue.arrayUnion([reviewedMedia.id.toString()]),
+    'averageRating': newUserAvgRating,
+    'totalReviews': userReviewCount,
+  });
+}
 
-      // Update media object with ratings and average rating
-      media = media.copyWith(
-        ratings: ratings,
-        averageRating: averageRating,
-      );
+Future<List<Media>> getAllFriendMedia() async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return [];
 
-      medias.add(media);
+  final userRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+  final userSnapshot = await userRef.get();
+  if (!userSnapshot.exists) return [];
+
+  List<String> friendIds = List<String>.from(userSnapshot['friends'] ?? []);
+  if (friendIds.isEmpty) return [];
+
+  // Fetch all reviews from friends
+  final reviewsSnapshot = await FirebaseFirestore.instance
+      .collectionGroup('reviews')
+      .where('userId', whereIn: friendIds)
+      .orderBy('timestamp', descending: true)
+      .get();
+
+  // Create a map of mediaId to corresponding reviews
+  Map<String, List<Rating>> mediaReviewMap = {};
+  for (var review in reviewsSnapshot.docs) {
+    String mediaId = review.reference.parent.parent?.id ?? "";
+    if (mediaId.isNotEmpty) {
+      if (!mediaReviewMap.containsKey(mediaId)) {
+        mediaReviewMap[mediaId] = [];
+      }
+      mediaReviewMap[mediaId]!.add(Rating.fromJson(review.data()));
+    }
+  }
+
+  if (mediaReviewMap.isEmpty) return [];
+
+  List<Media> friendMediaList = [];
+  List<String> mediaIdList = mediaReviewMap.keys.toList();
+
+  // Fetch media details in batches of Firestore limit (10)
+  for (int i = 0; i < mediaIdList.length; i += 10) {
+    List<String> batch = mediaIdList.sublist(i, i + 10 > mediaIdList.length ? mediaIdList.length : i + 10);
+
+    final mediaSnapshot = await FirebaseFirestore.instance
+        .collection('media')
+        .where(FieldPath.documentId, whereIn: batch)
+        .get();
+
+    for (var doc in mediaSnapshot.docs) {
+      Media media = Media.fromFirestore(doc.data());
+
+      media.ratings = mediaReviewMap[media.id.toString()] ?? [];
+      media.reviewCount = media.ratings.length;
+
+      // Calculate average rating and review count
+      double totalVal = 0;
+      for (var review in media.ratings) {
+        totalVal += review.score;
+      }
+      media.averageRating = media.reviewCount > 0 ? totalVal / media.reviewCount : 0.0;
+
+      friendMediaList.add(media);
+    }
+  }
+
+  return friendMediaList;
+}
+
+  Future<void> getFriendReviewsForMedia(Media media) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final userRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+    final userSnapshot = await userRef.get();
+
+    if (!userSnapshot.exists) return;
+
+    List<String> friendIds = List<String>.from(userSnapshot['friends'] ?? []);
+    if (friendIds.isEmpty) return;
+
+    List<Rating> allRatings = [];
+    const int chunkSize = 10;
+    for (int i = 0; i < friendIds.length; i += chunkSize) {
+      List<String> batch = friendIds.sublist(i, i + chunkSize > friendIds.length ? friendIds.length : i + chunkSize);
+
+      final reviewsSnapshot = await FirebaseFirestore.instance
+          .collection('media')
+          .doc(media.id.toString())
+          .collection('reviews')
+          .where('userId', whereIn: batch)
+          .orderBy('timestamp', descending: true)
+          .get();
+
+      allRatings.addAll(reviewsSnapshot.docs.map((doc) => Rating.fromJson(doc.data())));
     }
 
-    return medias;
+    /*
+    media.ratings = allRatings;
+    media.reviewCount = allRatings.length; // ✅ Correctly updating review count
+
+    double totalVal = 0;
+    for (var review in allRatings) {
+      totalVal += review.score;
+    }
+
+    media.averageRating = media.reviewCount > 0 ? totalVal / media.reviewCount : 0.0;
+    */
   }
 }
-*/

@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "959723271102",
+    "project_id": "cinecircle-8db9e",
+    "storage_bucket": "cinecircle-8db9e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:959723271102:android:270274e89f0f337677ffef",
+        "android_client_info": {
+          "package_name": "cinecircle8db9e.android"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOLphxlMPWbL_94pNMl03WRx0ZRZn0K5A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:959723271102:android:7c8c0928dc24e5f877ffef",
+        "android_client_info": {
+          "package_name": "com.example.cinecircle"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOLphxlMPWbL_94pNMl03WRx0ZRZn0K5A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:959723271102:android:6d688a73b12a227d77ffef",
+        "android_client_info": {
+          "package_name": "com.mycompany.cinecircle"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOLphxlMPWbL_94pNMl03WRx0ZRZn0K5A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

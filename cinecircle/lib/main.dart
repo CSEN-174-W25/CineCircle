@@ -1,19 +1,18 @@
 import 'package:cinecircle/screens/home/home_page.dart';
+import 'package:cinecircle/screens/signin/login_screen.dart'; 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
-//import 'screens/signin/login_screen.dart';
-//import 'screens/home/movie_list.dart';
 
 void main() async {
-  await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -24,13 +23,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'CineCircle',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: HomePage(),
-      // home: AuthCheck(), TODO: Add auth check
+      home: AuthCheck(), // ✅ Use AuthCheck to manage authentication state
     );
   }
 }
 
-/* class AuthCheck extends StatelessWidget {
+// ✅ Authentication Check Widget
+class AuthCheck extends StatelessWidget {
   const AuthCheck({super.key});
 
   @override
@@ -39,16 +38,15 @@ class MyApp extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
-            body: Center(child: CircularProgressIndicator()), 
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()), // Loading indicator
           );
         }
         if (snapshot.hasData) {
-          return MovieListScreen();
+          return HomePage(); // User is logged in, go to HomePage
         }
-        return LoginScreen();
+        return LoginScreen(); // User is NOT logged in, go to LoginScreen
       },
     );
   }
 }
-TODO: api */
