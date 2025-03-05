@@ -15,28 +15,6 @@ class AverageRating extends StatefulWidget{
     _AverageRatingState createState() => _AverageRatingState();
 }
 
-/*
-class _AverageRatingState extends State<AverageRating>{
-    @override
-    Widget build(BuildContext build){
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.network(
-              'https://static.vecteezy.com/system/resources/thumbnails/021/664/704/small_2x/gold-star-shotting-gold-star-transparent-gold-bokeh-stars-free-free-png.png',
-              width: 40,
-              height: 40
-            ),
-            Text(
-              widget.user.averageRating.toString(),
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
-            )
-          ]
-        );
-    }
-}
-*/
-
 class _AverageRatingState extends State<AverageRating> {
   @override
   Widget build(BuildContext context) {

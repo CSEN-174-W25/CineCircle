@@ -80,7 +80,7 @@ class _ProfilePageState extends State<ProfilePage> {
               //crossAxisAlignment: CrossAxisAlignment.center, // Center horizontally
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                SizedBox(height: MediaQuery.of(context).size.height * 0.2), // Adjust height for centering
+                SizedBox(height: MediaQuery.of(context).size.height * 0.2), 
                 UserDescription(user: johnDoe),
                 SizedBox(height: 20), // Add spacing between widgets
                 Text(
