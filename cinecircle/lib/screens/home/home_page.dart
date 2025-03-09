@@ -67,7 +67,7 @@ class HomePageState extends State<HomePage> {
         ),
       ),
       NotificationPage(),
-      ProfilePage(),
+      ProfilePage(FirebaseAuth.instance.currentUser?.uid),
     ];
 
     return Scaffold(

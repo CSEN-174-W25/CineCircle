@@ -1,3 +1,5 @@
+import 'package:cinecircle/models/media.dart';
+
 class User{
   final String userId;
   String username;
@@ -6,6 +8,11 @@ class User{
   List<String> friends;
   int totalFriends;
   int totalReviews;
+  List<Media> watchlist = [];
+  List<Media> topFour = [];
+  String picUrl = '';
+  String bio = '';
+
 
   User({
     required this.userId,
@@ -15,6 +22,10 @@ class User{
     required this.friends,
     this.totalReviews = 0,
     this.averageRating = 0.0,
+    required this.watchlist,
+    required this.topFour,
+    this.picUrl = '',
+    this.bio = '',
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -26,6 +37,10 @@ class User{
       friends: List<String>.from(json['friends'] ?? []),
       averageRating: json['averageRating'] ?? 0.0,
       totalReviews: json['totalReviews'] ?? 0,
+      watchlist: [],
+      topFour: [],
+      picUrl: json['picUrl'] ?? '',
+      bio: json['bio'] ?? '',
     );
   }
 
@@ -38,6 +53,8 @@ class User{
       'friends': friends,
       'averageRating': averageRating,
       'totalReviews': totalReviews,
+      'picUrl': picUrl,
+      'bio': bio,
     };
   }
 }
