@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cinecircle/models/media.dart';
 import 'package:cinecircle/models/rating.dart';
+import 'package:cinecircle/models/user.dart' as model;
 import 'package:firebase_auth/firebase_auth.dart';
 
 class FirestoreService {
@@ -144,17 +145,40 @@ Future<List<Media>> getAllFriendMedia() async {
 
       allRatings.addAll(reviewsSnapshot.docs.map((doc) => Rating.fromJson(doc.data())));
     }
+  }
 
-    /*
-    media.ratings = allRatings;
-    media.reviewCount = allRatings.length; // Correctly updating review count
+  Future<model.User?> getUser(String userId) async {
+    try {
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
 
-    double totalVal = 0;
-    for (var review in allRatings) {
-      totalVal += review.score;
+      if (!userDoc.exists || userDoc.data() == null) {
+        return null; // Return null if user does not exist
+      }
+      return model.User.fromJson(userDoc.data()!);
+    } catch (error) {
+      print("Error fetching user: $error");
+      return null;
     }
+  }
 
-    media.averageRating = media.reviewCount > 0 ? totalVal / media.reviewCount : 0.0;
-    */
+  Future<List<Media>> getRecentFourMedia(String userId) async {
+    try {
+      final mediaQuery = await FirebaseFirestore.instance
+          .collection('media')
+          .where('userId', isEqualTo: userId)
+          .orderBy('timestamp', descending: true) // Get 4 most recent first
+          .limit(4)
+          .get();
+
+      if (mediaQuery.docs.isEmpty) {
+        return [];
+      }
+
+      return mediaQuery.docs.map((doc) => Media.fromJson(doc.data())).toList();
+    } 
+    catch (error) {
+      print("Error fetching recent media for user: $error");
+      return [];
+    }
   }
 }

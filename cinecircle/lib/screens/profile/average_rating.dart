@@ -39,7 +39,7 @@ class _AverageRatingState extends State<AverageRating> {
         ),
         SizedBox(height: 5),
         Text(
-          "Across ${widget.user.watched} movies",
+          "Across ${widget.user.totalReviews} movies",
           style: TextStyle(fontSize: 15, color: const Color.fromARGB(255, 100, 100, 100)),
         ),
       ],

@@ -25,15 +25,15 @@ class _RecentWatchState extends State<RecentWatch>{
         return Row(
           children: [
             Image.network(
-              watchlist.media.imageUrl,
+              watchlist.imageUrl,
               width: 90, 
               height: 140,
               fit: BoxFit.cover,
             ),
             Column(
               children: [
-                Text(watchlist.media.title),
-                Text('Watched on ${watchlist.watchdate}'),
+                Text(watchlist.title),
+                Text('Watched on -insert date-'),
               ]
             )
           ]);

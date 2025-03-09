@@ -32,7 +32,7 @@ class _UserDescriptionState extends State<UserDescription> {
         ),
         const SizedBox(height: 4),
         Text(
-          '${widget.user.friendsAmount} Friends',
+          '${widget.user.totalFriends} Friends',
           style: const TextStyle(fontSize: 16, color: Colors.grey),
         ),
         FriendRequestButton(),

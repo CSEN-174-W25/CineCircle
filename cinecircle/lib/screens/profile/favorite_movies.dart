@@ -20,11 +20,11 @@ class _FavoriteMoviesState extends State<FavoriteMovies> {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: widget.user.top4.map((media) { // Iterate over top4 movies
+      children: widget.user.topFour.map((movie) { // Iterate over top4 movies
         return Padding(
           padding: const EdgeInsets.all(1.0),
           child: Image.network(
-            media.imageUrl,
+            movie.imageUrl,
             width: 90, // Set a fixed width
             height: 140, // Set a fixed height
             fit: BoxFit.cover, // Ensure the image fits well
