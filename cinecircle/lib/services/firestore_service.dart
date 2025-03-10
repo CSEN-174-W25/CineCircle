@@ -202,9 +202,20 @@ Future<List<Media>> getAllFriendMedia() async {
     }
   }
 
-  /*
-  Future<String> saveBio({required String bio}) async {
+  Future<void> saveBio({required String userId, required String newBio}) async {
+    final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
 
+    try {
+      await userRef.set({
+        'bio': newBio,
+      }, SetOptions(merge: true));
+
+      print("User bio updated successfully!");
+    } 
+    
+    catch (error) {
+      print("Error updating bio: $error");
+    }
   }
-  */
+
 }

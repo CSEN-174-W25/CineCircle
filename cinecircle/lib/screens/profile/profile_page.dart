@@ -42,9 +42,13 @@ Future<void> fetchUserData() async {
   User? user = await FirestoreService().getUser(widget.userId!);
   if (!mounted) return; 
 
-  //user!.watchlist = await FirestoreService().getRecentFourMedia(widget.userId!);
-  //if (!mounted) return; 
+  user!.watchlist = await FirestoreService().getRecentFourMedia(widget.userId!);
+  if (!mounted) return; 
 
+  //user.bio = await FirestoreService().getBio(widget,userId!);
+  //if (!mounted) return;
+  
+  /*
   user!.watchlist = [
     Media(
           title: "La Bamba",
@@ -56,8 +60,8 @@ Future<void> fetchUserData() async {
           reviewCount: 0,
           averageRating: 0.0,
     ),
-      
   ];
+  */
   
   user.topFour = [
     Media(
@@ -103,7 +107,6 @@ Future<void> fetchUserData() async {
   ];
   
   user.picUrl = "https://static.vecteezy.com/system/resources/thumbnails/019/879/186/small_2x/user-icon-on-transparent-background-free-png.png";
-  user.bio = "Yippee0YippeeYippeeYippeeYippeeYippeeYippeeYippeeYippee ദ്ദി •⩊• )";
 
   if (mounted) {
     setState(() {
