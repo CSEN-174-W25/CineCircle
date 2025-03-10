@@ -18,19 +18,24 @@ class RecentWatch extends StatefulWidget{
 }
 
 class _RecentWatchState extends State<RecentWatch>{
+  
+
   @override
   Widget build(BuildContext context){
     return Column(
        children: widget.user.watchlist.map((watchlist) { 
         return Row(
           children: [
+            SizedBox(width: 5),
             Image.network(
               watchlist.imageUrl,
               width: 90, 
               height: 140,
               fit: BoxFit.cover,
             ),
+            SizedBox(width: 80),
             Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(watchlist.title),
                 Text('Watched on -insert date-'),

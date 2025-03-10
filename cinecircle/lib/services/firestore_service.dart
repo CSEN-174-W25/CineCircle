@@ -164,6 +164,12 @@ Future<List<Media>> getAllFriendMedia() async {
   Future<List<Media>> getRecentFourMedia(String userId) async {
     try {
       final mediaQuery = await FirebaseFirestore.instance
+        .collectionGroup('reviews')  
+        .where(FieldPath.documentId, isEqualTo: userId)  
+        .orderBy('timestamp', descending: true)  
+        .limit(4)  
+        .get();
+      /*
           .collection('media')
           .where('userId', isEqualTo: userId)
           .orderBy('timestamp', descending: true) // Get 4 most recent first
@@ -175,10 +181,30 @@ Future<List<Media>> getAllFriendMedia() async {
       }
 
       return mediaQuery.docs.map((doc) => Media.fromJson(doc.data())).toList();
+      */
+      List<Media> recentMedias = [];
+
+      for (var reviewDoc in mediaQuery.docs) {
+        DocumentReference mediaRef = reviewDoc.reference.parent.parent!; 
+
+        final mediaSnapshot = await mediaRef.get();
+        if (mediaSnapshot.exists) {
+          recentMedias.add(Media.fromJson(mediaSnapshot.data() as Map<String, dynamic>));
+      }
+    }
+
+    return recentMedias;
+
     } 
     catch (error) {
       print("Error fetching recent media for user: $error");
       return [];
     }
   }
+
+  /*
+  Future<String> saveBio({required String bio}) async {
+
+  }
+  */
 }

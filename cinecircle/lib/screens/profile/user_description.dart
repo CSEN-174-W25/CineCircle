@@ -38,11 +38,11 @@ class _UserDescriptionState extends State<UserDescription> {
         FriendRequestButton(),
         const SizedBox(height: 10),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0), // Adjust padding as needed
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
           child: Text(
             widget.user.bio,
             style: const TextStyle(fontSize: 13),
-            textAlign: TextAlign.center, // Optional: Center the text
+            textAlign: TextAlign.center, 
           ),
         )
       ],

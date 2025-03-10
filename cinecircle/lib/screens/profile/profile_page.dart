@@ -6,6 +6,7 @@ import 'package:cinecircle/screens/profile/user_description.dart';
 import 'package:cinecircle/screens/profile/favorite_movies.dart';
 import 'package:cinecircle/screens/profile/recent_watch.dart';
 import 'package:cinecircle/services/firestore_service.dart';
+import 'package:cinecircle/screens/customize/customize.dart';
 
 class ProfilePage extends StatefulWidget {
   final String? userId;
@@ -37,14 +38,27 @@ Future<void> fetchUserData() async {
     }
     return;
   }
-
+  
   User? user = await FirestoreService().getUser(widget.userId!);
-  if (!mounted) return; // Double-check after async operation
+  if (!mounted) return; 
 
-  user!.watchlist = await FirestoreService().getRecentFourMedia(widget.userId!);
+  //user!.watchlist = await FirestoreService().getRecentFourMedia(widget.userId!);
+  //if (!mounted) return; 
 
-  if (!mounted) return; // Double-check again in case widget got removed during this call
-
+  user!.watchlist = [
+    Media(
+          title: "La Bamba",
+          imageUrl: "https://image.tmdb.org/t/p/w500/qNLMPY3KLrYgTX2QZ5iEwwOqyRz.jpg",
+          mediaType: "movie",
+          id: 24,
+          overview: "Aimlessly whiling away their days in the concrete environs of their dead-end suburbia, Vinz, Hubert, and Said",
+          releaseDate: "09-19-2024",
+          reviewCount: 0,
+          averageRating: 0.0,
+    ),
+      
+  ];
+  
   user.topFour = [
     Media(
       title: "La Haine",
@@ -136,7 +150,7 @@ Future<void> fetchUserData() async {
     ]
   );
   */
-
+      
       if (isLoading) {
         return Scaffold(
           appBar: AppBar(title: Text("Profile")),
@@ -151,11 +165,45 @@ Future<void> fetchUserData() async {
         );
       }
       return Scaffold(
-        appBar: AppBar(title: Text("Cinecircle")),
+        appBar: AppBar(
+          title: Text(
+            "CineCircle",
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: "Inter Tight",
+              fontSize: 32,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: () async {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Customize(user: currentUser!)),
+                );
+              },
+            ),
+          ],
+          centerTitle: true,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color.fromARGB(255, 255, 52, 52),
+                  Color.fromARGB(255, 194, 0, 161)
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+          ),
+        ),
         body: SingleChildScrollView(
          // child: Center( // Center the Column
             child: Column(
-              //crossAxisAlignment: CrossAxisAlignment.center, // Center horizontally
+              //crossAxisAlignment: CrossAxisAlignment.center, 
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 SizedBox(height: MediaQuery.of(context).size.height * 0.2), 
