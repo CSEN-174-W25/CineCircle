@@ -35,7 +35,7 @@ class _UserDescriptionState extends State<UserDescription> {
           '${widget.user.totalFriends} Friends',
           style: const TextStyle(fontSize: 16, color: Colors.grey),
         ),
-        FriendRequestButton(userId: widget.user.userId),
+        FriendRequestButton(user: widget.user),
         const SizedBox(height: 10),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0), 

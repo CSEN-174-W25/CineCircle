@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:cinecircle/screens/customize/customize.dart';
+import 'package:cinecircle/models/user.dart';
 
 class FriendRequestButton extends StatefulWidget {
-  final String userId;  // ID of the profile being viewed
+  final User user;  // ID of the profile being viewed
 
-  const FriendRequestButton({Key? key, required this.userId}) : super(key: key);
+  const FriendRequestButton({Key? key, required this.user}) : super(key: key);
 
   @override
   _FriendRequestButtonState createState() => _FriendRequestButtonState();
@@ -30,9 +32,10 @@ class _FriendRequestButtonState extends State<FriendRequestButton> {
     if (currentUserId == null) return;
 
     // Check if the profile is the user's own profile
-    if (widget.userId == currentUserId) {
+    if (widget.user.userId == currentUserId) {
       setState(() {
         isViewingOwnProfile = true;
+        buttonText = "Edit Profile";
       });
       return;
     }
@@ -48,9 +51,9 @@ class _FriendRequestButtonState extends State<FriendRequestButton> {
       List<dynamic> pendingOutgoing = userDoc['pendingOutgoingFriends'] ?? [];
 
       setState(() {
-        isFriend = friendsList.contains(widget.userId);
-        isIncomingRequest = pendingIncoming.contains(widget.userId);
-        isOutgoingRequest = pendingOutgoing.contains(widget.userId);
+        isFriend = friendsList.contains(widget.user.userId);
+        isIncomingRequest = pendingIncoming.contains(widget.user.userId);
+        isOutgoingRequest = pendingOutgoing.contains(widget.user.userId);
 
         // Set button text accordingly
         if (isFriend) {
@@ -75,13 +78,13 @@ class _FriendRequestButtonState extends State<FriendRequestButton> {
         FirebaseFirestore.instance.collection('users').doc(currentUserId);
 
     DocumentReference viewedUserRef =
-        FirebaseFirestore.instance.collection('users').doc(widget.userId);
+        FirebaseFirestore.instance.collection('users').doc(widget.user.userId);
 
     try {
       if (isFriend) {
         // Remove friend
         await currentUserRef.update({
-          'friends': FieldValue.arrayRemove([widget.userId])
+          'friends': FieldValue.arrayRemove([widget.user.userId])
         });
         await viewedUserRef.update({
           'friends': FieldValue.arrayRemove([currentUserId])
@@ -94,7 +97,7 @@ class _FriendRequestButtonState extends State<FriendRequestButton> {
       } else if (isOutgoingRequest) {
         // Cancel outgoing request
         await currentUserRef.update({
-          'pendingOutgoingFriends': FieldValue.arrayRemove([widget.userId])
+          'pendingOutgoingFriends': FieldValue.arrayRemove([widget.user.userId])
         });
         await viewedUserRef.update({
           'pendingIncomingFriends': FieldValue.arrayRemove([currentUserId])
@@ -107,8 +110,8 @@ class _FriendRequestButtonState extends State<FriendRequestButton> {
       } else if (isIncomingRequest) {
         // Accept incoming request
         await currentUserRef.update({
-          'friends': FieldValue.arrayUnion([widget.userId]),
-          'pendingIncomingFriends': FieldValue.arrayRemove([widget.userId])
+          'friends': FieldValue.arrayUnion([widget.user.userId]),
+          'pendingIncomingFriends': FieldValue.arrayRemove([widget.user.userId])
         });
         await viewedUserRef.update({
           'friends': FieldValue.arrayUnion([currentUserId]),
@@ -122,7 +125,7 @@ class _FriendRequestButtonState extends State<FriendRequestButton> {
       } else {
         // Send new friend request
         await currentUserRef.update({
-          'pendingOutgoingFriends': FieldValue.arrayUnion([widget.userId])
+          'pendingOutgoingFriends': FieldValue.arrayUnion([widget.user.userId])
         });
         await viewedUserRef.update({
           'pendingIncomingFriends': FieldValue.arrayUnion([currentUserId])
@@ -144,7 +147,25 @@ class _FriendRequestButtonState extends State<FriendRequestButton> {
   Widget build(BuildContext context) {
     // Hide the button if viewing your own profile
     if (isViewingOwnProfile) {
-      return SizedBox.shrink();
+      //return SizedBox.shrink();
+      return ElevatedButton(
+        onPressed: () async {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Customize(user: widget.user)),
+                    );
+                  },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isFriend
+              ? Colors.red  // Remove Friend state
+              : isOutgoingRequest
+                  ? Colors.grey  // Cancel Request state
+                  : isIncomingRequest
+                      ? Colors.green // Accept Request state
+                      : Colors.blue, // Add Friend state
+        ),
+        child: Text(buttonText), 
+      );
     }
 
     return ElevatedButton(
