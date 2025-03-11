@@ -202,20 +202,30 @@ Future<List<Media>> getAllFriendMedia() async {
     }
   }
 
-  Future<void> saveBio({required String userId, required String newBio}) async {
+  Future<void> updateUserField(String userId, {String? newUsername, String? newBio}) async {
     final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
 
     try {
-      await userRef.set({
-        'bio': newBio,
-      }, SetOptions(merge: true));
+      Map<String, dynamic> updatedFields = {};
 
-      print("User bio updated successfully!");
-    } 
-    
-    catch (error) {
-      print("Error updating bio: $error");
+      if (newUsername != null) {
+        updatedFields['username'] = newUsername;
+      }
+
+      if (newBio != null) {
+        updatedFields['bio'] = newBio;
+      }
+
+      if (updatedFields.isNotEmpty) {
+        await userRef.update(updatedFields);
+        print("User field(s) updated successfully!");
+      } else {
+        print("No new field to update");
+      }
+    } catch (error) {
+      print("Error updating user field: $error");
     }
   }
+
 
 }

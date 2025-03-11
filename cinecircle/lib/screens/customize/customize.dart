@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cinecircle/screens/customize/edit_bio.dart';
+import 'package:cinecircle/screens/customize/edit_user_field.dart';
 import 'package:cinecircle/models/user.dart';
 import 'package:cinecircle/services/firestore_service.dart';
 
@@ -48,12 +48,22 @@ class _CustomizeState extends State<Customize> {
           children: [
             SizedBox(height: 20),
             Text(
+              "Edit Username",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+            EditFields(
+              user: widget.user,
+              onEditingFields:(String userId, String newUsername) {
+                 FirestoreService().updateUserField(userId, newUsername: newUsername); 
+              }
+            ),
+            SizedBox(height: 20),
+            Text(
               "Edit Bio",
                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-            EditBio(
+            EditFields(
               user: widget.user,
-              onEditingBio:(String userId, String newBio) {
-                 FirestoreService().saveBio(userId: userId, newBio: newBio); 
+              onEditingFields:(String userId, String newBio) {
+                 FirestoreService().updateUserField(userId, newBio: newBio); 
               }
             ),
           ],

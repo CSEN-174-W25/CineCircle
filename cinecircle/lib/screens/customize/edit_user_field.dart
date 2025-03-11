@@ -1,29 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:cinecircle/models/user.dart';
 
-class EditBio extends StatefulWidget {
+class EditFields extends StatefulWidget {
   final User user;
-  final Function(String, String) onEditingBio;
-    EditBio ({
-      required this.user,
-      required this.onEditingBio,
-      super.key
+  final Function(String, String) onEditingFields;
+   EditFields ({
+    required this.user,
+    required this.onEditingFields,
+    super.key
     });
 
   @override
-  _EditBioState createState() => _EditBioState();  
+  _EditFieldsState createState() => _EditFieldsState();  
 }
 
-class _EditBioState extends State<EditBio>{
+class _EditFieldsState extends State<EditFields>{
   final TextEditingController _controller = TextEditingController();
   double textBoxHeight = 50;
 
   void _updateBio() {
     if (_controller.text.isEmpty) return;
 
-    String newBio = _controller.text;
-
-    widget.onEditingBio(widget.user.userId, _controller.text);
+    widget.onEditingFields(widget.user.userId, _controller.text);
     _controller.clear();
 
     Future.delayed(Duration(milliseconds: 500), () {
@@ -55,7 +53,7 @@ class _EditBioState extends State<EditBio>{
                     });
                   },
                   decoration: InputDecoration(
-                    hintText: "Edit Bio...",
+                    hintText: "Input Text...",
                     border: OutlineInputBorder(),
                     contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                   ),

@@ -44,9 +44,6 @@ Future<void> fetchUserData() async {
 
   user!.watchlist = await FirestoreService().getRecentFourMedia(widget.userId!);
   if (!mounted) return; 
-
-  //user.bio = await FirestoreService().getBio(widget,userId!);
-  //if (!mounted) return;
   
   /*
   user!.watchlist = [
