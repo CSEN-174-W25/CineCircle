@@ -60,6 +60,20 @@ Future<void> _signIn() async {
   }
 }
 
+Future<void> _resetPassword() async {
+    if (emailController.text.isEmpty) {
+      setState(() => _errorMessage = "Please enter your email.");
+      return;
+    }
+
+    try {
+      await _auth.sendPasswordResetEmail(email: emailController.text.trim());
+      setState(() => _errorMessage = "Password reset link sent to your email.");
+    } on auth.FirebaseAuthException catch (e) {
+      setState(() => _errorMessage = _getAuthErrorMessage(e.code));
+    }
+  }
+
   // A list of possible error messages
   String _getAuthErrorMessage(String errorCode) {
     switch (errorCode) {
@@ -114,6 +128,10 @@ Future<void> _signIn() async {
 );
               },
               child: Text("Don't have an account? Sign up"),
+            ),
+            TextButton(
+              onPressed: _resetPassword,
+              child: Text("Forgot Password?"),
             ),
           ],
         ),
