@@ -1,13 +1,12 @@
 import 'package:cinecircle/screens/home/home_page.dart';
-import 'package:cinecircle/screens/profile/profile_page.dart';
-//import 'package:cinecircle/widgets/movie_detail.dart';
-import 'package:cinecircle/models/media.dart';
 import 'package:cinecircle/screens/signin/login_screen.dart'; 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
+import 'services/firestore_service.dart';
+import 'models/user.dart' as model;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,25 +14,38 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+
+  model.User? currentUser;
+  try {
+    if (FirebaseAuth.instance.currentUser != null) {
+      currentUser = await FirestoreService().getCurrentUserProfile();
+    }
+  } catch (e) {
+    print('Error fetching user profile: $e');
+  }
+
+  runApp(MyApp(currentUser: currentUser));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final model.User? currentUser;
+
+  const MyApp({super.key, this.currentUser});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'CineCircle',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: AuthCheck(), //TODO: Add auth check
+      home: AuthCheck(currentUser: currentUser),
     );
   }
 }
 
-// Authentication Check
 class AuthCheck extends StatelessWidget {
-  const AuthCheck({super.key});
+  final model.User? currentUser;
+
+  const AuthCheck({super.key, this.currentUser});
 
   @override
   Widget build(BuildContext context) {
@@ -42,13 +54,13 @@ class AuthCheck extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-            body: Center(child: CircularProgressIndicator()), // Loading indicator
+            body: Center(child: CircularProgressIndicator()),
           );
         }
-        if (snapshot.hasData) {
-          return HomePage(); // If user is logged in, sent to to HomePage
+        if (snapshot.hasData && currentUser != null) {
+          return HomePage(user: currentUser!);
         }
-        return LoginScreen(); // If user is not logged in, sent to LoginScreen
+        return LoginScreen();
       },
     );
   }

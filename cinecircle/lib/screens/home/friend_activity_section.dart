@@ -2,32 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:cinecircle/models/media.dart';
 import 'package:cinecircle/services/firestore_service.dart';
 
-class FriendActivitySection extends StatefulWidget {
+class FriendActivitySection extends StatelessWidget {
   final void Function(Media) onMediaTap;
 
   const FriendActivitySection({
     required this.onMediaTap,
     super.key,
   });
-
-  @override
-  _FriendActivitySectionState createState() => _FriendActivitySectionState();
-}
-
-class _FriendActivitySectionState extends State<FriendActivitySection> {
-  late Future<List<Media>> mediaWithReviewsFuture;
-  
-  void fetchMedia() {
-    setState(() {
-      mediaWithReviewsFuture = FirestoreService().getAllFriendMedia();
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    mediaWithReviewsFuture = FirestoreService().getAllFriendMedia();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +23,8 @@ class _FriendActivitySectionState extends State<FriendActivitySection> {
           ),
         ),
 
-        FutureBuilder<List<Media>>(
-          future: mediaWithReviewsFuture,
+        StreamBuilder<List<Media>>(
+          stream: FirestoreService().getAllFriendMedia(), // Real-time stream
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
@@ -59,20 +40,16 @@ class _FriendActivitySectionState extends State<FriendActivitySection> {
               );
             } else {
               final mediaWithReviews = snapshot.data!;
+
               return ListView.builder(
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(), // Uses HomePage scrolling behavior
+                physics: NeverScrollableScrollPhysics(),
                 itemCount: mediaWithReviews.length,
                 itemBuilder: (context, index) {
                   final media = mediaWithReviews[index];
 
                   return GestureDetector(
-                    onTap: () async {
-                      await FirestoreService().getFriendReviewsForMedia(media);
-                      setState(() {}); // Ensure UI updates after fetching
-                      fetchMedia();
-                      widget.onMediaTap(media);
-                    },
+                    onTap: () => onMediaTap(media), // Data refresh happens automatically
                     child: Card(
                       margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                       elevation: 4,

@@ -100,7 +100,7 @@ class MediaReviewState extends State<MediaReview> {
 
             SizedBox(height: 10),
 
-            // Dynamic TextField Height (since search bar covers part of searched movies)
+            // Dynamic textField height (since search bar covers part of searched movies)
             ConstrainedBox(
               constraints: BoxConstraints(
                 maxHeight: 200,

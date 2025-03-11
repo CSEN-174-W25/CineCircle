@@ -23,7 +23,7 @@ class _UserDescriptionState extends State<UserDescription> {
       children: [
         CircleAvatar(
           radius: 50,
-          backgroundImage: NetworkImage(widget.user.picUrl),
+          //TODO: figure out why this causes exception - backgroundImage: NetworkImage(widget.user.picUrl),
         ),
         const SizedBox(height: 8),
         Text(
@@ -35,14 +35,14 @@ class _UserDescriptionState extends State<UserDescription> {
           '${widget.user.totalFriends} Friends',
           style: const TextStyle(fontSize: 16, color: Colors.grey),
         ),
-        FriendRequestButton(),
+        FriendRequestButton(userId: widget.user.userId),
         const SizedBox(height: 10),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          padding: EdgeInsets.symmetric(horizontal: 16.0), 
           child: Text(
             widget.user.bio,
             style: const TextStyle(fontSize: 13),
-            textAlign: TextAlign.center, 
+            textAlign: TextAlign.center,
           ),
         )
       ],

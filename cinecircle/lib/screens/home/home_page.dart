@@ -9,9 +9,11 @@ import 'package:cinecircle/models/rating.dart';
 import 'package:cinecircle/services/firestore_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cinecircle/screens/signin/login_screen.dart';
+import 'package:cinecircle/models/user.dart' as model;
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final model.User user;
+  const HomePage({super.key, required this.user});
 
   @override
   HomePageState createState() => HomePageState();

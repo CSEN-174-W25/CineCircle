@@ -1,7 +1,9 @@
 import 'package:cinecircle/screens/home/home_page.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cinecircle/screens/signin/register_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cinecircle/models/user.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -11,40 +13,64 @@ class LoginScreen extends StatefulWidget {
 class LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
   bool _isLoading = false;
   String _errorMessage = '';
 
-  Future<void> _signIn() async {
-    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
-      setState(() => _errorMessage = "Please enter both email and password.");
+Future<void> _signIn() async {
+  if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+    setState(() => _errorMessage = "Please enter both email and password.");
+    return;
+  }
+
+  setState(() {
+    _isLoading = true;
+    _errorMessage = '';
+  });
+
+  try {
+    // Firebase Authentication
+    auth.UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+      email: emailController.text.trim(),
+      password: passwordController.text.trim(),
+    );
+
+    final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userCredential.user!.uid)
+        .get();
+
+    if (!userDoc.exists) {
+      setState(() => _errorMessage = "No profile data found.");
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-      _errorMessage = ''; // Reset error message
-    });
+    final loggedInUser = User.fromJson(userDoc.data()!);
+
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => HomePage(user: loggedInUser)),
+    );
+
+  } on auth.FirebaseAuthException catch (e) {
+    setState(() => _errorMessage = _getAuthErrorMessage(e.code));
+  } finally {
+    if (mounted) setState(() => _isLoading = false);
+  }
+}
+
+Future<void> _resetPassword() async {
+    if (emailController.text.isEmpty) {
+      setState(() => _errorMessage = "Please enter your email.");
+      return;
+    }
 
     try {
-      await _auth.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
-      );
-
-      if (!mounted) return;
-
-            Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
-      
-    } on FirebaseAuthException catch (e) {
-      setState(() {
-        _errorMessage = _getAuthErrorMessage(e.code);
-      });
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
+      await _auth.sendPasswordResetEmail(email: emailController.text.trim());
+      setState(() => _errorMessage = "Password reset link sent to your email.");
+    } on auth.FirebaseAuthException catch (e) {
+      setState(() => _errorMessage = _getAuthErrorMessage(e.code));
     }
   }
 
@@ -102,6 +128,10 @@ class LoginScreenState extends State<LoginScreen> {
 );
               },
               child: Text("Don't have an account? Sign up"),
+            ),
+            TextButton(
+              onPressed: _resetPassword,
+              child: Text("Forgot Password?"),
             ),
           ],
         ),
