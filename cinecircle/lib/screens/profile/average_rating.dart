@@ -30,7 +30,7 @@ class _AverageRatingState extends State<AverageRating> {
             ),
             SizedBox(width: 5), 
             Text(
-              widget.user.averageRating.toString(),
+              widget.user.averageRating.toStringAsFixed(2),
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ],

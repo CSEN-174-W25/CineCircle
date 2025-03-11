@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cinecircle/models/user.dart';
+import 'package:cinecircle/widgets/media_card.dart';
+import 'package:cinecircle/widgets/media_detail.dart';
 
-class RecentWatch extends StatefulWidget{
+class RecentWatch extends StatefulWidget {
   final User user;
 
   const RecentWatch({
@@ -9,31 +11,48 @@ class RecentWatch extends StatefulWidget{
     super.key
   });
 
-  @override
-  _RecentWatchState createState() => _RecentWatchState();
+    @override
+   _RecentWatchState createState() => _RecentWatchState();
 }
 
-class _RecentWatchState extends State<RecentWatch>{
+class _RecentWatchState extends State<RecentWatch> {
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
+    if (widget.user.watchlist.isEmpty) {
+      return Center(child: Text("No watched films available."));
+    }
+
     return Column(
-       children: widget.user.watchlist.map((watchlist) { 
-        return Row(
-          children: [
-            Image.network(
-              watchlist.imageUrl,
-              width: 90, 
-              height: 140,
-              fit: BoxFit.cover,
-            ),
-            Column(
-              children: [
-                Text(watchlist.title),
-                Text('Watched on -insert date-'),
-              ]
-            )
-          ]);
-      }).toList(),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          height: 300, // Base height for non-wrapped titles
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: widget.user.watchlist.length,
+            itemBuilder: (context, index) {
+              final media = widget.user.watchlist[index];
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                child: MediaCard(
+                  media: media,
+                  imageHeight: 220, 
+                  imageWidth: 140, // Increased width for better text wrapping
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MediaDetail(media: media),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

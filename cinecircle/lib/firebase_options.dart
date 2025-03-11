@@ -59,5 +59,4 @@ class DefaultFirebaseOptions {
     projectId: 'cinecircle-8db9e',
     storageBucket: 'cinecircle-8db9e.firebasestorage.app',
   );
-
 }

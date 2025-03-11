@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cinecircle/screens/profile/profile_page.dart';
 
 class ModifyFriendsScreen extends StatefulWidget {
   @override
@@ -72,35 +73,6 @@ class _ModifyFriendsScreenState extends State<ModifyFriendsScreen> {
     }
   }
 
-  Future<void> toggleFriend(String userId) async {
-    try {
-      if (currentUserId == null) return;
-
-      DocumentReference userDocRef =
-          FirebaseFirestore.instance.collection('users').doc(currentUserId);
-
-      if (friendsList.contains(userId)) {
-        // Remove friend
-        await userDocRef.update({
-          'friends': FieldValue.arrayRemove([userId])
-        });
-        setState(() {
-          friendsList.remove(userId);
-        });
-      } else {
-        // Add friend
-        await userDocRef.update({
-          'friends': FieldValue.arrayUnion([userId])
-        });
-        setState(() {
-          friendsList.add(userId);
-        });
-      }
-    } catch (error) {
-      print("Error updating friends list: $error");
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -137,16 +109,25 @@ class _ModifyFriendsScreenState extends State<ModifyFriendsScreen> {
                     itemCount: searchResults.length,
                     itemBuilder: (context, index) {
                     final user = searchResults[index];
-                    final userId = user['userId'];
-                    final isFriend = friendsList.contains(userId);
-
                     return ListTile(
                       title: Text(user['username'] ?? "Unknown User"),
-                      trailing: Switch(
-                      value: isFriend,
-                      onChanged: (value) => toggleFriend(userId),
+                      trailing: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProfilePage(user['userId']), // Pass user ID to ProfilePage
+                            ),
+                          );
+                        },
+                      child: Text("View Profile"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      ),
                     ),
-                  );
+                  );  
                 },
               ),
             ),
