@@ -1,61 +1,88 @@
-import 'media.dart';
-import 'movie_entry.dart';
+import 'package:cinecircle/models/media.dart';
+import 'package:cinecircle/models/recommended_media.dart';
 
 class User{
-    final String userId;
-    String username;
-    double averageRating;
-    int friendsAmount;
-    String picUrl;  //Profile picture URL
-    List<Media> top4;
-    String bio;
-    int watched;
-    List<MediaEntry> watchlist;
-    List<String> reviewedMedias; 
-    List<String> friends;
-    int totalReviews;
+  final String userId;
+  String username;
+  double averageRating;
+  List<String> reviewedMedias; 
+  List<String> friends;
+  int totalFriends;
+  int totalReviews;
+  List<Media> watchlist = [];
+  List<String> topFour = [];
+  String picUrl = '';
+  String bio = '';
+  RecommendedMedia recommendedMedia;
+  List<User> pendingIncomingFriends = [];
+  List<User> pendingOutgoingFriends = [];
 
-    User({
-        required this.userId,
-        required this.username,
-        this.averageRating = 0.0,
-        this.friendsAmount = 0,
-        required this.picUrl,
-        this.watched = 0,
-        required this.friends,
-        List<Media>? top4,
-        List<MediaEntry>? watchlist,
-        required this.reviewedMedias,
-        this.totalReviews = 0,
-        required this.bio
-    }): top4 = top4 ?? [], watchlist = watchlist ?? [];
+  User({
+    required this.userId,
+    required this.username,
+    required this.totalFriends,
+    required this.reviewedMedias,
+    required this.friends,
+    this.totalReviews = 0,
+    this.averageRating = 0.0,
+    required this.watchlist,
+    required this.topFour,
+    this.picUrl = '',
+    this.bio = '',
+    required this.recommendedMedia,
+    required this.pendingOutgoingFriends,
+    required this.pendingIncomingFriends,
+  });
 
-    factory User.fromJson(Map<String, dynamic> json){
-        return User(
-            userId: json['userId'],
-            username: json['username'],
-            averageRating:  (json['score'] as num).toDouble(),
-            reviewedMedias: List<String>.from(json['reviewedMedias'] ?? []),
-            friends: List<String>.from(json['friends'] ?? []),
-            totalReviews: json['totalReviews'] ?? 0,
-            friendsAmount: (json['friendsAmount'] as num).toInt(),
-            watched: (json['watched'] as num).toInt(),
-            picUrl: json['picUrl'] ?? '',
-            bio: json['bio'],
-            watchlist: (json['watchlist'] as List?)?.map((item) => MediaEntry.fromJson(item)).toList() ?? [],
-            top4: (json['top4'] as List?)?.map((item) => Media.fromJson(item)).toList() ?? [],
-        ); 
-    }
+factory User.fromJson(Map<String, dynamic> json) {
+  return User(
+    userId: json['userId'] ?? '',
+    username: json['username'] ?? '',
+    totalFriends: (json['totalFriends'] as num?)?.toInt() ?? 0,
+    reviewedMedias: List<String>.from(json['reviewedMedias'] ?? []),
+    friends: List<String>.from(json['friends'] ?? []),
+    averageRating: json['averageRating'] ?? 0.0,
+    totalReviews: json['totalReviews'] ?? 0,
+    watchlist: [],
+    topFour: List<String>.from(json['topFour'] ?? []),
+    recommendedMedia: json['recommendedMedia'] != null
+        ? RecommendedMedia.fromFirestore(json['recommendedMedia'])
+        : RecommendedMedia(
+            recommended: Media(
+              title: "Unknown", 
+              id: 0, 
+              imageUrl: "", 
+              mediaType: "unknown", 
+              overview: "",
+              releaseDate: "",
+              reviewCount: 0,
+              averageRating: 0.0
+            ),
+            sentById: '',
+            sentByUsername: ''
+          ), 
+    picUrl: json['picUrl'] ?? '',
+    bio: json['bio'] ?? '',
+    pendingIncomingFriends: [],
+    pendingOutgoingFriends: [],
+  );
+}
 
     Map<String, dynamic> toJson() {
     return {
       'userId': userId,
       'username': username,
-      'friendsAmount': friendsAmount,
+      'totalFriends': totalFriends,
       'reviewedMedias': reviewedMedias,
       'friends': friends,
       'averageRating': averageRating,
       'totalReviews': totalReviews,
+      'recommendedMedia': recommendedMedia,
+      'picUrl': picUrl,
+      'bio': bio,
+      'pendingIncomingFriends': pendingIncomingFriends,
+      'pendingOutgoingFriends': pendingOutgoingFriends,
+      'topFour': topFour,
     };
 }
 }

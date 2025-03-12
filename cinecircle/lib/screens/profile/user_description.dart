@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:cinecircle/models/user.dart';
 import 'package:cinecircle/screens/profile/friend_button.dart';
+import 'package:cinecircle/models/profile_pic.dart';
 
 class UserDescription extends StatefulWidget{
     final User user;
@@ -21,10 +22,7 @@ class _UserDescriptionState extends State<UserDescription> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        CircleAvatar(
-          radius: 50,
-          backgroundImage: NetworkImage(widget.user.picUrl),
-        ),
+        ProfilePicture(user: widget.user),
         const SizedBox(height: 8),
         Text(
           widget.user.username,
@@ -32,17 +30,17 @@ class _UserDescriptionState extends State<UserDescription> {
         ),
         const SizedBox(height: 4),
         Text(
-          '${widget.user.friendsAmount} Friends',
+          '${widget.user.totalFriends} Friends',
           style: const TextStyle(fontSize: 16, color: Colors.grey),
         ),
-        FriendRequestButton(),
+        FriendRequestButton(user: widget.user),
         const SizedBox(height: 10),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0), // Adjust padding as needed
+          padding: EdgeInsets.symmetric(horizontal: 16.0), 
           child: Text(
             widget.user.bio,
             style: const TextStyle(fontSize: 13),
-            textAlign: TextAlign.center, // Optional: Center the text
+            textAlign: TextAlign.center,
           ),
         )
       ],

@@ -43,7 +43,6 @@ class Media {
       imageUrl: (json['poster_path'] != null && json['poster_path'].isNotEmpty)
           ? "https://image.tmdb.org/t/p/w500${json['poster_path']}"
           : "assets/images/placeholder.png",  // Uses placeholder image if missing
-      averageRating: 0.0,
       id: json['id'] as int? ?? 0,
       mediaType: json['media_type'] ?? "unknown",
       overview: json['overview'] ?? "",
@@ -60,7 +59,6 @@ class Media {
       title: json['title'] ?? "Unknown",
       releaseDate: json['releaseDate'] ?? "Unknown",
       imageUrl: json['imageUrl'] ?? "assets/images/placeholder.png",
-      averageRating: (json['averageRating'] as num?)?.toDouble() ?? 0.0,
       id: json['mediaId'] as int? ?? 0,
       mediaType: json['mediaType'] ?? "unknown",
       overview: json['overview'] ?? "",
@@ -74,7 +72,6 @@ class Media {
       'title': title,
       'releaseDate': releaseDate,
       'imageUrl': imageUrl,
-      'averageRating': averageRating,
       'mediaId': id,
       'mediaType': mediaType,
       'overview': overview,
