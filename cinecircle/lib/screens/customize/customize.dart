@@ -3,6 +3,10 @@ import 'package:cinecircle/screens/customize/edit_user_field.dart';
 import 'package:cinecircle/models/user.dart';
 import 'package:cinecircle/services/firestore_service.dart';
 import 'package:cinecircle/screens/customize/add_fav.dart';
+import 'package:cinecircle/screens/customize/pic_uploader.dart';
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Customize extends StatefulWidget {
   final User user;
@@ -17,6 +21,21 @@ class Customize extends StatefulWidget {
 }
 
 class _CustomizeState extends State<Customize> {
+  File? _image; // Store the picked image file
+
+  final picker = ImagePicker();
+
+  // Function to pick an image from the gallery
+  Future<void> _pickImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path); // Save the selected image
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,6 +68,12 @@ class _CustomizeState extends State<Customize> {
           children: [
             SizedBox(height: 20),
             Text(
+              "Upload Profile Picture",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+            SizedBox(height: 10),
+            ProfilePictureUploader(),
+            SizedBox(height: 20),
+            Text(
               "Edit Username",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
             SizedBox(height: 10),
@@ -74,7 +99,6 @@ class _CustomizeState extends State<Customize> {
               "Select Favorite Media",
                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
             SizedBox(height: 10),
-            
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -99,7 +123,7 @@ class _CustomizeState extends State<Customize> {
                 ),
               ]
             ),
-            
+            SizedBox(height: 40),
           ],
         )
       )

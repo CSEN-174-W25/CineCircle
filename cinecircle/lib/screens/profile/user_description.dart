@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:cinecircle/models/user.dart';
 import 'package:cinecircle/screens/profile/friend_button.dart';
+import 'package:cinecircle/models/profile_pic.dart';
 
 class UserDescription extends StatefulWidget{
     final User user;
@@ -21,10 +22,7 @@ class _UserDescriptionState extends State<UserDescription> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        CircleAvatar(
-          radius: 50,
-          //TODO: figure out why this causes exception - backgroundImage: NetworkImage(widget.user.picUrl),
-        ),
+        ProfilePicture(),
         const SizedBox(height: 8),
         Text(
           widget.user.username,

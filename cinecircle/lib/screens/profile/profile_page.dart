@@ -31,19 +31,6 @@ class ProfilePage extends StatelessWidget {
               fontWeight: FontWeight.w900,
             ),
           ),
-          /*
-          actions: [
-            IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: () async {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Customize(user: currentUser!)),
-                );
-              },
-            ),
-          ],
-          */
           centerTitle: true,
           flexibleSpace: Container(
             decoration: BoxDecoration(
