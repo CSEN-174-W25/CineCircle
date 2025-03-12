@@ -152,7 +152,7 @@ class LoginScreenState extends State<LoginScreen> {
 
               if (_errorMessage.isNotEmpty) ...[
                 SizedBox(height: 10),
-                Text(_errorMessage, style: TextStyle(color: Colors.red)),
+                Text(_errorMessage, style: TextStyle(color: const Color.fromARGB(255, 255, 255, 255))),
               ],
 
               SizedBox(height: 20),
