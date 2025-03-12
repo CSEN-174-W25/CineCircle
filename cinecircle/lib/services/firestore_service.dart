@@ -1,3 +1,4 @@
+import 'package:cinecircle/models/recommended_media.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cinecircle/models/media.dart';
 import 'package:cinecircle/models/rating.dart';
@@ -13,10 +14,14 @@ class FirestoreService {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
-    final userRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
-    final mediaRef = FirebaseFirestore.instance.collection('media').doc(reviewedMedia.id.toString());
+    final userRef =
+        FirebaseFirestore.instance.collection('users').doc(user.uid);
+    final mediaRef = FirebaseFirestore.instance
+        .collection('media')
+        .doc(reviewedMedia.id.toString());
 
-    final userRatingRef = userRef.collection('reviews').doc(reviewedMedia.id.toString());
+    final userRatingRef =
+        userRef.collection('reviews').doc(reviewedMedia.id.toString());
     final mediaRatingRef = mediaRef.collection('reviews').doc(user.uid);
 
     final mediaSnapshot = await mediaRef.get();
@@ -48,7 +53,8 @@ class FirestoreService {
       totalUserRating += (doc['score'] as num).toDouble();
     }
 
-    double newUserAvgRating = userReviewCount > 0 ? totalUserRating / userReviewCount : 0.0;
+    double newUserAvgRating =
+        userReviewCount > 0 ? totalUserRating / userReviewCount : 0.0;
 
     await userRef.update({
       'reviewedMedias': FieldValue.arrayUnion([reviewedMedia.id.toString()]),
@@ -64,13 +70,14 @@ class FirestoreService {
       return Stream.value([]);
     }
 
-    final userRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+    final userRef =
+        FirebaseFirestore.instance.collection('users').doc(user.uid);
 
     return userRef.snapshots().asyncMap((userSnapshot) async {
       if (!userSnapshot.exists) return [];
 
       List<String> friendIds = List<String>.from(userSnapshot['friends'] ?? []);
-      if (friendIds.isEmpty) return [];
+      friendIds.insert(0, user.uid);
 
       Map<String, List<Rating>> mediaReviewMap = {};
       final reviewsSnapshot = await FirebaseFirestore.instance
@@ -99,8 +106,10 @@ class FirestoreService {
           media.ratings = mediaReviewMap[mediaId]!;
           media.reviewCount = media.ratings.length;
 
-          double totalScore = media.ratings.fold(0, (sum, review) => sum + review.score);
-          media.averageRating = media.reviewCount > 0 ? totalScore / media.reviewCount : 0.0;
+          double totalScore =
+              media.ratings.fold(0, (sum, review) => sum + review.score);
+          media.averageRating =
+              media.reviewCount > 0 ? totalScore / media.reviewCount : 0.0;
 
           friendMediaList.add(media);
         }
@@ -117,19 +126,23 @@ class FirestoreService {
       return Stream.value([]);
     }
 
-    final userRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
-
+    final userRef =
+        FirebaseFirestore.instance.collection('users').doc(user.uid);
     return userRef.snapshots().asyncMap((userSnapshot) async {
       if (!userSnapshot.exists) return [];
 
       List<String> friendIds = List<String>.from(userSnapshot['friends'] ?? []);
-      if (friendIds.isEmpty) return [];
+      friendIds.insert(0, user.uid);
 
       List<Rating> allRatings = [];
       const int chunkSize = 10;
 
       for (int i = 0; i < friendIds.length; i += chunkSize) {
-        List<String> batch = friendIds.sublist(i, i + chunkSize > friendIds.length ? friendIds.length : i + chunkSize);
+        List<String> batch = friendIds.sublist(
+            i,
+            i + chunkSize > friendIds.length
+                ? friendIds.length
+                : i + chunkSize);
 
         final reviewsSnapshot = await FirebaseFirestore.instance
             .collection('media')
@@ -139,8 +152,13 @@ class FirestoreService {
             .orderBy('timestamp', descending: true)
             .get();
 
-        allRatings.addAll(reviewsSnapshot.docs.map((doc) => Rating.fromJson(doc.data())));
+        allRatings.addAll(
+            reviewsSnapshot.docs.map((doc) => Rating.fromJson(doc.data())));
       }
+      double totalScore =
+          allRatings.fold(0.0, (sum, rating) => sum + rating.score);
+      media.averageRating =
+          allRatings.isNotEmpty ? totalScore / allRatings.length : 0.0;
 
       return allRatings;
     });
@@ -183,7 +201,6 @@ class FirestoreService {
       final validMediaList = mediaDetails.whereType<Media>().toList();
 
       return validMediaList;
-
     } catch (e) {
       return [];
     }
@@ -229,25 +246,15 @@ class FirestoreService {
             .limit(4)
             .get();
 
-        if (ratingsSnapshot.docs.isEmpty) return [];
-
-        List<Media> topMovies = [];
-        for (var doc in ratingsSnapshot.docs) {
-          final mediaDoc = await FirebaseFirestore.instance
-              .collection('media')
-              .doc(doc.id)
-              .get();
-
-          if (mediaDoc.exists) {
-            topMovies.add(Media.fromFirestore(mediaDoc.data()!));
-          }
+        if (mediaDoc.exists) {
+          topMovies.add(Media.fromFirestore(mediaDoc.data()!));
         }
-
-        return topMovies;
-      } catch (error) {
-        print("Error fetching top-rated media: $error");
-        return [];
       }
+
+      return topMovies;
+    } catch (error) {
+      print("Error fetching top-rated media: $error");
+      return [];
     }
     */
 
@@ -260,15 +267,15 @@ class FirestoreService {
         .snapshots()
         .debounceTime(const Duration(milliseconds: 500))
         .asyncMap((snapshot) async {
-        if (!snapshot.exists || snapshot.data() == null) {
-          return null;
-        }
+      if (!snapshot.exists || snapshot.data() == null) {
+        return null;
+      }
 
-        if (retryCount >= 3) {
-          return null;
-        }
+      if (retryCount >= 3) {
+        return null;
+      }
 
-        final user = model.User.fromJson(snapshot.data()!);
+      final user = model.User.fromJson(snapshot.data()!);
 
         try {
           final results = await Future.wait([
@@ -279,14 +286,12 @@ class FirestoreService {
           user.watchlist = results[0];
           //user.topFour = results[1];
 
-          retryCount = 0; 
-          return user;
-
-        } 
-        catch (e) {
-          retryCount++;
-            return null;
-        }
+        retryCount = 0;
+        return user;
+      } catch (e) {
+        retryCount++;
+        return null;
+      }
     });
   }
 
@@ -298,7 +303,10 @@ class FirestoreService {
         return null; // Not logged in
       }
 
-      final userDoc = await FirebaseFirestore.instance.collection('users').doc(firebaseUser.uid).get();
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(firebaseUser.uid)
+          .get();
 
       if (!userDoc.exists || userDoc.data() == null) {
         print("User profile not found in Firestore.");
@@ -395,4 +403,87 @@ class FirestoreService {
 
     await userRef.update({'topFour': topFour});
   }
+
+  // Real-time Stream for Recommended Media
+  Stream<List<RecommendedMedia>> getRecommendedMedia(String userId) {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('recommendedMedia')
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.docs.isEmpty) {
+        print("No recommended media found for user: $userId");
+      }
+
+      return snapshot.docs.map((doc) {
+        print("Doc Data: ${doc.data()}");
+        return RecommendedMedia.fromFirestore(doc.data());
+      }).toList();
+    });
+  }
+
+// Real-time Stream for Incoming Friend Requests
+  Stream<List<String>> getIncomingFriendRequests(String userId) {
+    int retryCount = 0;
+
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .snapshots()
+        .debounceTime(const Duration(milliseconds: 500))
+        .asyncMap((snapshot) async {
+      if (!snapshot.exists || snapshot.data() == null) {
+        return [];
+      }
+
+      if (retryCount >= 3) {
+        return [];
+      }
+
+      try {
+        final incomingRequests =
+            List<String>.from(snapshot.data()?['pendingIncomingFriends'] ?? []);
+        retryCount = 0;
+        return incomingRequests;
+      } catch (e) {
+        retryCount++;
+        return [];
+      }
+    });
+  }
+
+  /// Add Recommended Media to Firestore
+  Future<void> recommendMedia({
+    required String userId,
+    required RecommendedMedia recommendedMedia,
+  }) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('recommendedMedia')
+        .add(recommendedMedia.toFirestore());
+  }
+
+Future<void> removeRecommendedMedia(String userId, RecommendedMedia media) async {
+  try {
+    final recommendedMediaRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('recommendedMedia');
+
+    // Correctly target the nested 'recommended.mediaId' field
+    final querySnapshot = await recommendedMediaRef
+        .where('recommended.mediaId', isEqualTo: media.recommended.id)
+        .get();
+
+    for (var doc in querySnapshot.docs) {
+      await doc.reference.delete();
+    }
+
+    print("Successfully removed recommended media");
+  } catch (e) {
+    print("Error removing recommended media: $e");
+  }
+}
 }

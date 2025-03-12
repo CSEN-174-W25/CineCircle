@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:cinecircle/models/user.dart' as model;
 import 'package:cinecircle/services/firestore_service.dart';
 
-// Auth Exception Handler
 enum AuthStatus {
   successful,
   wrongPassword,
@@ -47,7 +46,6 @@ class AuthExceptionHandler {
   }
 }
 
-// Register Screen
 class RegisterScreen extends StatefulWidget {
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
@@ -73,7 +71,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         return AuthStatus.emailAlreadyExists;
       }
 
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -105,7 +104,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-  // Register Button Logic
   void _onRegisterPressed() async {
     if (_formKey.currentState!.validate()) {
       _showLoadingDialog();
@@ -116,7 +114,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         username: usernameController.text.trim(),
       );
 
-      Navigator.of(context).pop(); // Hide loading dialog
+      Navigator.of(context).pop();
 
       if (_status == AuthStatus.successful) {
         model.User? currentUser;
@@ -134,7 +132,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-  // Check if the username already exists in Firestore
   Future<bool> checkIfUsernameExists(String username) async {
     final result = await _firestore
         .collection("users")
@@ -143,18 +140,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return result.docs.isNotEmpty;
   }
 
-  // Display a SnackBar for error messages
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
   }
 
-  // Show a Loading Dialog
   void _showLoadingDialog() {
     showDialog(
       context: context,
-      barrierDismissible: false, 
+      barrierDismissible: false,
       builder: (context) => Dialog(
         backgroundColor: Colors.transparent,
         child: Center(
@@ -167,41 +162,118 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Register")),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: usernameController,
-                decoration: InputDecoration(labelText: "Username"),
-                validator: (value) =>
-                    value!.isEmpty ? "Please enter a username" : null,
-              ),
-              TextFormField(
-                controller: emailController,
-                decoration: InputDecoration(labelText: "Email"),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) =>
-                    value!.isEmpty ? "Please enter a valid email" : null,
-              ),
-              TextFormField(
-                controller: passwordController,
-                decoration: InputDecoration(labelText: "Password"),
-                obscureText: true,
-                validator: (value) =>
-                    value!.length < 6 ? "Password must be at least 6 characters" : null,
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _onRegisterPressed,
-                child: Text("Register"),
-              ),
+      appBar: AppBar(
+        backgroundColor: Color.fromARGB(255, 183, 60, 254),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context), // Navigates back to Login
+        ),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFFB243C6), // Theme color
+              Color(0xFF43C6FF), // Theme color
             ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
         ),
+        child: Padding(
+          padding: const EdgeInsets.only(
+              top: 160.0, left: 24.0, right: 24.0, bottom: 24.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Camera Icon
+                Icon(Icons.movie_creation_outlined,
+                    size: 100, color: Colors.white),
+
+                SizedBox(height: 20),
+
+                Text(
+                  "Create Account",
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+
+                SizedBox(height: 30),
+
+                // Input Fields
+                _buildTextField(
+                    controller: usernameController, label: "Username"),
+                _buildTextField(controller: emailController, label: "Email"),
+                _buildTextField(
+                    controller: passwordController,
+                    label: "Password",
+                    obscureText: true),
+
+                SizedBox(height: 20),
+
+                // Register Button
+                ElevatedButton(
+                  onPressed: _onRegisterPressed,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
+                    padding:
+                        EdgeInsets.symmetric(vertical: 12.0, horizontal: 60.0),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
+                  ),
+                  child: Text("Register", style: TextStyle(fontSize: 18)),
+                ),
+
+                // Attribution Image (required by the api)
+                Spacer(),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Image.asset(
+                    'assets/images/tmdb_attribution.png',
+                    width: 100,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Custom Text Field
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    bool obscureText = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: TextFormField(
+        controller: controller,
+        obscureText: obscureText,
+        style: TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: TextStyle(color: Colors.white70),
+          filled: true,
+          fillColor: Colors.white.withOpacity(0.2),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.white70),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.white70),
+          ),
+        ),
+        validator: (value) => value!.isEmpty ? "Please enter $label" : null,
       ),
     );
   }

@@ -5,8 +5,6 @@ import 'package:cinecircle/screens/notifications/notification_page.dart';
 import 'package:cinecircle/screens/profile/profile_page.dart';
 import 'package:cinecircle/widgets/media_detail.dart';
 import 'package:cinecircle/models/media.dart';
-import 'package:cinecircle/models/rating.dart';
-import 'package:cinecircle/services/firestore_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cinecircle/screens/signin/login_screen.dart';
 import 'package:cinecircle/models/user.dart' as model;
@@ -37,20 +35,15 @@ class HomePageState extends State<HomePage> {
         child: Column(
           children: [
             YourThoughtsSection(
-              selectedMedia: selectedMedia,
-              onMediaSelected: (Media media) {
-                setState(() {
-                  selectedMedia = media;
-                });
-              },
-              onReviewAdded: (Media media, Rating rating) {
-                    FirestoreService().saveReview(reviewedMedia: media, userReview: rating);
-                setState(() {         // Unselect media after review submission
-                  selectedMedia = null;
-                });
+                onMediaTap: (Media media) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MediaDetail(media: media),
+                  ),
+                );
               },
             ),
-
             SizedBox(height: 20),
 
             FriendActivitySection(
