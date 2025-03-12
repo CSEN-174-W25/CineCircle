@@ -1,6 +1,7 @@
 // Displays the user's top 4 favorite movies
 import 'package:flutter/material.dart';
 import 'package:cinecircle/models/user.dart';
+import 'package:cinecircle/screens/customize/input_fav.dart';
 import 'package:cinecircle/widgets/media_card.dart';
 import 'package:cinecircle/widgets/media_detail.dart';
 
@@ -19,6 +20,28 @@ class FavoriteMovies extends StatefulWidget {
 class _FavoriteMoviesState extends State<FavoriteMovies> {
   @override
   Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          height: 220,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 4,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: InputFav(user: widget.user, index: index, imageHeight: 220, imageWidth: 140),
+                ),
+              );
+            }
+          )
+        )
+      ]
+    );
+    /*
     if (widget.user.topFour.isEmpty) {
       return Center(child: Text("No favorite media available."));
     }
@@ -36,7 +59,7 @@ class _FavoriteMoviesState extends State<FavoriteMovies> {
 
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                /*
+               
                 child: MediaCard(
                   media: media,
                   imageHeight: 220, 
@@ -50,12 +73,13 @@ class _FavoriteMoviesState extends State<FavoriteMovies> {
                     );
                   },
                 ),
-                */
+                
               );
             },
           ),
         ),
       ],
     );
+    */
   }
 }

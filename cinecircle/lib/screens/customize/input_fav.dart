@@ -8,10 +8,14 @@ import 'package:cinecircle/services/firestore_service.dart';
 class InputFav extends StatefulWidget{
   final User user;
   final int index;
+  double imageHeight;
+  double imageWidth;
 
   InputFav({
     required this.user,
     required this.index,
+    this.imageHeight = 118,
+    this.imageWidth = 95.5,
     super.key});
 
   @override
@@ -20,8 +24,8 @@ class InputFav extends StatefulWidget{
 
 class _InputFavState extends State<InputFav>{
   String? mediaId;
-  double imageHeight = 118;
-  double imageWidth = 95.5;
+  //double imageHeight = 118;
+  //double imageWidth = 95.5;
 
   @override
   void initState() {
@@ -47,14 +51,11 @@ class _InputFavState extends State<InputFav>{
     }
 
     if (mediaId == "") {
-      return ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.asset(
-              "assets/images/placeholder.png",
-              width: imageWidth,
-              height: imageHeight,
-              fit: BoxFit.cover,
-            ),
+      return Image.asset(
+        "assets/images/placeholder.png",
+        width: widget.imageWidth,
+        height: widget.imageHeight,
+        fit: BoxFit.cover,
       );
     }
 

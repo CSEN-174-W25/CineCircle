@@ -52,6 +52,7 @@ class _CustomizeState extends State<Customize> {
             Text(
               "Edit Username",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+            SizedBox(height: 10),
             EditFields(
               user: widget.user,
               onEditingFields:(String userId, String newUsername) {
@@ -62,6 +63,7 @@ class _CustomizeState extends State<Customize> {
             Text(
               "Edit Bio",
                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+            SizedBox(height: 10),
             EditFields(
               user: widget.user,
               onEditingFields:(String userId, String newBio) {
@@ -72,18 +74,31 @@ class _CustomizeState extends State<Customize> {
             Text(
               "Select Favorite Media",
                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                InputFav(user: widget.user, index: 0),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: InputFav(user: widget.user, index: 0),
+                ),
                 SizedBox(width: 5),
-                InputFav(user: widget.user, index: 1),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: InputFav(user: widget.user, index: 0),
+                ),
                 SizedBox(width: 5),
-                InputFav(user: widget.user, index: 2),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: InputFav(user: widget.user, index: 0),
+                ),
                 SizedBox(width: 5),
-                InputFav(user: widget.user, index: 3),
-              ]),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: InputFav(user: widget.user, index: 0),
+                ),
+              ]
+            ),
           ],
         )
       )
