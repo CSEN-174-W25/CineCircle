@@ -47,6 +47,7 @@ dependencies:
   firebase_auth: ^5.5.1
   cloud_firestore: ^5.6.3
   firebase_performance: ^0.10.1+2
+  #firebase_app_check: ^0.3.2
 
   # Authentication (Google Sign-In)
   google_sign_in: ^6.1.0

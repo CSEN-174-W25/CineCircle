@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cinecircle/screens/customize/edit_user_field.dart';
 import 'package:cinecircle/models/user.dart';
+import 'package:cinecircle/models/profile_pic.dart';
 import 'package:cinecircle/services/firestore_service.dart';
 import 'package:cinecircle/screens/customize/add_fav.dart';
 import 'package:cinecircle/screens/customize/pic_uploader.dart';
@@ -64,14 +65,23 @@ class _CustomizeState extends State<Customize> {
           ),
         ),
       body: SingleChildScrollView(
+        child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.0), // Adjust the horizontal padding value
         child: Column(
           children: [
             SizedBox(height: 20),
             Text(
-              "Upload Profile Picture",
+              "Enter Profile Picture URL",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
             SizedBox(height: 10),
-            ProfilePictureUploader(),
+            ProfilePicture(user: widget.user),
+            SizedBox(height: 10),
+            EditFields(
+              user: widget.user,
+              onEditingFields:(String userId, String newPic) {
+                 FirestoreService().updateUserField(userId, newPic: newPic); 
+              }
+            ),
             SizedBox(height: 20),
             Text(
               "Edit Username",
@@ -106,17 +116,17 @@ class _CustomizeState extends State<Customize> {
                   user: widget.user,
                   index: 0,
                 ),
-                SizedBox(width: 5),
+                SizedBox(width: 2),
                 AddFav(
                   user: widget.user,
                   index: 1,
                 ),
-                SizedBox(width: 5),
+                SizedBox(width: 2),
                 AddFav(
                   user: widget.user,
                   index: 2,
                 ),
-                SizedBox(width: 5),
+                SizedBox(width: 2),
                 AddFav(
                   user: widget.user,
                   index: 3,
@@ -125,6 +135,7 @@ class _CustomizeState extends State<Customize> {
             ),
             SizedBox(height: 40),
           ],
+        )
         )
       )
     );

@@ -18,8 +18,8 @@ class Fav extends StatefulWidget{
   Fav({
     required this.user,
     required this.index,
-    this.imageHeight = 118,
-    this.imageWidth = 95.5,
+    this.imageHeight = 115,
+    this.imageWidth = 92.5,
     this.media,
     super.key});
 

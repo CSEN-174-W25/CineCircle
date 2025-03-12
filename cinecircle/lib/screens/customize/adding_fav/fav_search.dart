@@ -80,8 +80,8 @@ class _FavSearchState extends State<FavSearch>{
               child: ListTile(
                 leading: Image.network(
                   media.imageUrl,
-                  width: 50,
-                  height: 75,
+                  width: 48,
+                  height: 73,
                   fit: BoxFit.cover
                 ),
                 title: Text(media.title),

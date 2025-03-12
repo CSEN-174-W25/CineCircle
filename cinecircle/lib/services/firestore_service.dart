@@ -189,7 +189,7 @@ class FirestoreService {
     }
   }
 
-  Future<void> updateUserField(String userId, {String? newUsername, String? newBio}) async {
+  Future<void> updateUserField(String userId, {String? newUsername, String? newBio, String? newPic}) async {
     final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
 
     try {
@@ -201,6 +201,10 @@ class FirestoreService {
 
       if (newBio != null) {
         updatedFields['bio'] = newBio;
+      }
+
+      if (newPic != null){
+        updatedFields['picUrl'] = newPic;
       }
 
       if (updatedFields.isNotEmpty) {

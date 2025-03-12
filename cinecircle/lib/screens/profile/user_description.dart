@@ -22,7 +22,7 @@ class _UserDescriptionState extends State<UserDescription> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ProfilePicture(),
+        ProfilePicture(user: widget.user),
         const SizedBox(height: 8),
         Text(
           widget.user.username,
