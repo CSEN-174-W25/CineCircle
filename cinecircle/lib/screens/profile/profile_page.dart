@@ -84,7 +84,7 @@ class ProfilePage extends StatelessWidget {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 5),
-                FavoriteMovies(user: currentUser),
+                //FavoriteMovies(user: currentUser),
                 SizedBox(height: 20),
 
                 Text(

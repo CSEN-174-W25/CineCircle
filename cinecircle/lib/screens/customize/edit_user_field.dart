@@ -4,6 +4,7 @@ import 'package:cinecircle/models/user.dart';
 class EditFields extends StatefulWidget {
   final User user;
   final Function(String, String) onEditingFields;
+  
    EditFields ({
     required this.user,
     required this.onEditingFields,

@@ -36,6 +36,7 @@ class _FavoriteMoviesState extends State<FavoriteMovies> {
 
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                /*
                 child: MediaCard(
                   media: media,
                   imageHeight: 220, 
@@ -49,6 +50,7 @@ class _FavoriteMoviesState extends State<FavoriteMovies> {
                     );
                   },
                 ),
+                */
               );
             },
           ),

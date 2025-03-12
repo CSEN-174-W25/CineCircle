@@ -156,15 +156,12 @@ class _FriendRequestButtonState extends State<FriendRequestButton> {
                     );
                   },
         style: ElevatedButton.styleFrom(
-          backgroundColor: isFriend
-              ? Colors.red  // Remove Friend state
-              : isOutgoingRequest
-                  ? Colors.grey  // Cancel Request state
-                  : isIncomingRequest
-                      ? Colors.green // Accept Request state
-                      : Colors.blue, // Add Friend state
+          backgroundColor: const Color.fromARGB(255, 238, 67, 90),
+          //foregroundColor: Color.fromARGB(0, 255, 255, 255) // Add Friend state
         ),
-        child: Text(buttonText), 
+        child: Text(
+          buttonText,
+          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)), 
       );
     }
 

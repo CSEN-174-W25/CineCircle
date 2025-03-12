@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cinecircle/screens/customize/edit_user_field.dart';
 import 'package:cinecircle/models/user.dart';
 import 'package:cinecircle/services/firestore_service.dart';
+import 'package:cinecircle/screens/customize/input_fav.dart';
+import 'package:cinecircle/widgets/media_card.dart';
 
 class Customize extends StatefulWidget {
   final User user;
@@ -66,6 +68,22 @@ class _CustomizeState extends State<Customize> {
                  FirestoreService().updateUserField(userId, newBio: newBio); 
               }
             ),
+            SizedBox(height: 20),
+            Text(
+              "Select Favorite Media",
+               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                InputFav(user: widget.user, index: 0),
+                SizedBox(width: 5),
+                InputFav(user: widget.user, index: 1),
+                SizedBox(width: 5),
+                InputFav(user: widget.user, index: 2),
+                SizedBox(width: 5),
+                InputFav(user: widget.user, index: 3),
+              ]),
           ],
         )
       )

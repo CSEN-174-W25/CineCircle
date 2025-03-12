@@ -10,7 +10,7 @@ class User{
   int totalFriends;
   int totalReviews;
   List<Media> watchlist = [];
-  List<Media> topFour = [];
+  List<String> topFour = [];
   String picUrl = '';
   String bio = '';
   RecommendedMedia recommendedMedia;
@@ -44,7 +44,7 @@ factory User.fromJson(Map<String, dynamic> json) {
     averageRating: json['averageRating'] ?? 0.0,
     totalReviews: json['totalReviews'] ?? 0,
     watchlist: [],
-    topFour: [],
+    topFour: List<String>.from(json['topFour'] ?? []),
     recommendedMedia: json['recommendedMedia'] != null
         ? RecommendedMedia.fromFirestore(json['recommendedMedia'])
         : RecommendedMedia(
@@ -82,6 +82,7 @@ factory User.fromJson(Map<String, dynamic> json) {
       'bio': bio,
       'pendingIncomingFriends': pendingIncomingFriends,
       'pendingOutgoingFriends': pendingOutgoingFriends,
+      'topFour': topFour,
     };
 }
 }

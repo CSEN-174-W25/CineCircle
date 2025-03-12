@@ -214,7 +214,7 @@ class FirestoreService {
     }
   }
 
-
+/*
     Future<List<Media>> getTopFourMedia(String userId) async {
       try {
         final ratingsSnapshot = await FirebaseFirestore.instance
@@ -245,6 +245,7 @@ class FirestoreService {
         return [];
       }
     }
+    */
 
   // Real-time Stream for User Profile
   Stream<model.User?> getUser(String userId) {
@@ -268,11 +269,11 @@ class FirestoreService {
         try {
           final results = await Future.wait([
             getRecentFourMedia(userId).catchError((_) => <Media>[]),
-            getTopFourMedia(userId).catchError((_) => <Media>[]),
+            //getTopFourMedia(userId).catchError((_) => <Media>[]),
           ]);
 
           user.watchlist = results[0];
-          user.topFour = results[1];
+          //user.topFour = results[1];
 
           retryCount = 0; 
           return user;
@@ -305,4 +306,29 @@ class FirestoreService {
       return null; // Handle Firestore errors
     }
   }
+
+  Future<void> ensureFavField(String userId) async {
+    DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(userId);
+
+    DocumentSnapshot userDoc = await userRef.get();
+    if (!userDoc.exists || !userDoc.data().toString().contains('topFour')) {
+      await userRef.set({
+        'topFour': List.generate(4, (_) => ""),
+      }, SetOptions(merge: true));
+    }
+  }
+
+  Future<String?> getFav(String userId, int index) async {
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+
+    if (userDoc.exists) {
+      List<dynamic>? favoriteMedia = userDoc['topFour'] as List<dynamic>?;
+
+      if (favoriteMedia != null && index >= 0 && index < favoriteMedia.length) {
+        return favoriteMedia[index].toString();
+      }
+    }
+    return null;
+  }
+
 }
