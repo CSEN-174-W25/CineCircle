@@ -331,4 +331,64 @@ class FirestoreService {
     return null;
   }
 
+  Future<List<Media>> getReviewedMedia(String userId) async {
+    DocumentSnapshot userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+
+    if (!userDoc.exists) {
+      throw Exception("User not found");
+    }
+
+    List<dynamic>? reviewedMediaIds = userDoc['reviewedMedias'] as List<dynamic>?;
+
+    if (reviewedMediaIds == null || reviewedMediaIds.isEmpty) {
+      return []; 
+    }
+
+    QuerySnapshot mediaQuery = await FirebaseFirestore.instance
+        .collection('media')
+        .where(FieldPath.documentId, whereIn: reviewedMediaIds)
+        .orderBy('title') 
+        .get();
+
+    return mediaQuery.docs.map((doc) => Media.fromFirestore(doc.data() as Map<String, dynamic>)).toList();
+  }
+  
+
+  static final Map<String, Media> _mediaCache = {};
+
+  Media? getMediaFromCache(String mediaId) {
+    return _mediaCache[mediaId];
+  }
+
+  
+  Future<Media> fetchMedia(String mediaId) async {
+    if (_mediaCache.containsKey(mediaId)) {
+      return _mediaCache[mediaId]!;
+    }
+
+    DocumentSnapshot doc = await FirebaseFirestore.instance.collection('media').doc(mediaId).get();
+    if (!doc.exists) throw Exception("Media not found");
+
+    var data = doc.data() as Map<String, dynamic>?;
+    
+    if (data == null){
+      throw Exception("Movie data is null");
+    }
+
+    Media media = Media.fromFirestore(data);
+    _mediaCache[mediaId] = media;
+    return media;
+  }
+  
+  Future<void> updateFavMedia(String userId, int index, int mediaId) async {
+    DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(userId);
+
+    DocumentSnapshot userDoc = await userRef.get();
+    if (!userDoc.exists) return;
+
+    List<dynamic> topFour = userDoc['topFour'] ?? ["", "", "", ""]; 
+    topFour[index] = mediaId.toString();
+
+    await userRef.update({'topFour': topFour});
+  }
 }

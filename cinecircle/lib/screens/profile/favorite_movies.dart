@@ -1,9 +1,7 @@
 // Displays the user's top 4 favorite movies
 import 'package:flutter/material.dart';
 import 'package:cinecircle/models/user.dart';
-import 'package:cinecircle/screens/customize/input_fav.dart';
-import 'package:cinecircle/widgets/media_card.dart';
-import 'package:cinecircle/widgets/media_detail.dart';
+import 'package:cinecircle/widgets/fav.dart';
 
 class FavoriteMovies extends StatefulWidget {
   final User user;
@@ -24,7 +22,7 @@ class _FavoriteMoviesState extends State<FavoriteMovies> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          height: 220,
+          height: 300,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: 4,
@@ -33,7 +31,7 @@ class _FavoriteMoviesState extends State<FavoriteMovies> {
                 padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: InputFav(user: widget.user, index: index, imageHeight: 220, imageWidth: 140),
+                  child: Fav(user: widget.user, index: index, imageHeight: 220, imageWidth: 140),
                 ),
               );
             }

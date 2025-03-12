@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cinecircle/screens/customize/edit_user_field.dart';
 import 'package:cinecircle/models/user.dart';
 import 'package:cinecircle/services/firestore_service.dart';
-import 'package:cinecircle/screens/customize/input_fav.dart';
-import 'package:cinecircle/widgets/media_card.dart';
+import 'package:cinecircle/screens/customize/add_fav.dart';
 
 class Customize extends StatefulWidget {
   final User user;
@@ -75,30 +74,32 @@ class _CustomizeState extends State<Customize> {
               "Select Favorite Media",
                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
             SizedBox(height: 10),
+            
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: InputFav(user: widget.user, index: 0),
+                AddFav(
+                  user: widget.user,
+                  index: 0,
                 ),
                 SizedBox(width: 5),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: InputFav(user: widget.user, index: 0),
+                AddFav(
+                  user: widget.user,
+                  index: 1,
                 ),
                 SizedBox(width: 5),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: InputFav(user: widget.user, index: 0),
+                AddFav(
+                  user: widget.user,
+                  index: 2,
                 ),
                 SizedBox(width: 5),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: InputFav(user: widget.user, index: 0),
+                AddFav(
+                  user: widget.user,
+                  index: 3,
                 ),
               ]
             ),
+            
           ],
         )
       )
